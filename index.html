@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LAEN380 Quiz Portal — Academic Presentations in English</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#FAFAFA;color:#1a1a1a;line-height:1.6;min-height:100vh}
+h1,h2,h3,h4,h5,h6{font-family:'Outfit',sans-serif;line-height:1.3;color:#111}
+input,button{font-family:inherit;font-size:inherit}
+.fade-in{animation:fadeIn .5s ease-out}.slide-up{animation:slideUp .5s ease-out}.slide-in{animation:slideIn .4s ease-out}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:translateX(0)}}
+@keyframes confetti{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.confetti-piece{position:fixed;top:-10px;animation:confetti 3s ease-out forwards;pointer-events:none;z-index:9999}
+.page{min-height:100vh;background:#FAFAFA}
+.page-center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#F5F5F5}
+.wrap{max-width:960px;margin:0 auto;padding:24px 32px}
+.wrap-sm{max-width:560px;margin:0 auto;padding:24px 32px}
+.wrap-md{max-width:760px;margin:0 auto;padding:24px 32px}
+.wrap-lg{max-width:1200px;margin:0 auto;padding:24px 32px}
+.card{background:#fff;border-radius:12px;border:1px solid #E5E5E5;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.btn{display:inline-flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:600;border-radius:10px;transition:all .25s;cursor:pointer;border:none;font-size:14px}
+.btn-dark{background:#111;color:#fff;padding:12px 28px}.btn-dark:hover{background:#333;box-shadow:0 6px 20px rgba(0,0,0,.15)}
+.btn-dark.lg{padding:14px 32px;font-size:16px}
+.btn-dark.sm{padding:7px 16px;font-size:12px;font-weight:500}
+.btn-outline{background:#fff;color:#333;padding:10px 24px;border:1.5px solid #D4D4D4}.btn-outline:hover{border-color:#111;color:#111}
+.btn-outline.sm{padding:6px 14px;font-size:12px;font-weight:500}
+.btn-success{background:#111;color:#4ADE80;padding:12px 28px}.btn-success:hover{background:#222}
+.btn-danger{background:#fff;color:#DC2626;padding:7px 14px;border:1.5px solid #FECACA;font-size:12px;font-weight:500}.btn-danger:hover{background:#FEF2F2;border-color:#DC2626}
+.btn-ghost{background:transparent;color:#888;padding:6px 12px;font-size:13px;font-weight:500;border:none}.btn-ghost:hover{color:#111}
+.w-full{width:100%}
+.input{width:100%;padding:12px 16px;border-radius:10px;border:1.5px solid #D4D4D4;outline:none;transition:border-color .2s;font-size:15px;color:#111;background:#fff}
+.input:focus{border-color:#111}.input::placeholder{color:#aaa}
+.label{display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.quiz-option{padding:14px 16px;border-radius:10px;border:1.5px solid #E5E5E5;background:#fff;cursor:pointer;transition:all .2s;display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
+.quiz-option:hover{border-color:#999;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.quiz-option.selected{border-color:#111;background:#F5F5F5}
+.opt-letter{flex-shrink:0;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:#F0F0F0;color:#666;transition:all .2s}
+.quiz-option.selected .opt-letter{background:#111;color:#fff}
+.drag-item{padding:12px 14px;border-radius:10px;border:1.5px solid #E5E5E5;background:#fff;cursor:grab;transition:all .2s;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.drag-item:active{cursor:grabbing}.drag-item.dragging{opacity:.4}.drag-item.drag-over{border-color:#111;background:#F5F5F5}
+.drag-num{flex-shrink:0;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:#F0F0F0;color:#666}
+.audio-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;background:#F0F0F0;color:#333;font-weight:500;cursor:pointer;border:1px solid #D4D4D4;transition:all .2s;font-size:14px}
+.audio-btn:hover{background:#E5E5E5}
+.pbar{width:100%;height:6px;background:#E5E5E5;border-radius:999px;overflow:hidden}
+.pfill{height:100%;background:#111;border-radius:999px;transition:width .5s}
+.progress-ring{transition:stroke-dashoffset .5s ease}
+.nav{background:rgba(255,255,255,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid #E5E5E5;position:sticky;top:0;z-index:50}
+.nav-inner{max-width:960px;margin:0 auto;padding:10px 32px;display:flex;align-items:center;justify-content:space-between}
+.video-wrap{aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#000}.video-wrap iframe{width:100%;height:100%;border:none}
+table{width:100%;border-collapse:collapse;text-align:left}
+th{padding:10px 14px;font-size:11px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:.5px;background:#FAFAFA;border-bottom:1px solid #E5E5E5}
+td{padding:10px 14px;font-size:13px;color:#333}tr:hover td{background:#FAFAFA}tbody tr{border-top:1px solid #F0F0F0}
+.alert{padding:14px 18px;border-radius:10px;font-size:13px;line-height:1.6}
+.alert-light{background:#F5F5F5;border:1px solid #E5E5E5;color:#333}
+.alert-green{background:#F0FDF4;border:1px solid #BBF7D0;color:#166534}
+.alert-red{background:#FEF2F2;border:1px solid #FECACA;color:#991B1B}
+.alert-amber{background:#FFFBEB;border:1px solid #FDE68A;color:#92400E}
+.badge{display:inline-flex;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600}
+.badge-idle{background:#F0F0F0;color:#999}
+.badge-good{background:#111;color:#4ADE80}
+.badge-mid{background:#F5F5F5;color:#111;border:1px solid #D4D4D4}
+.badge-low{background:#F5F5F5;color:#DC2626;border:1px solid #FECACA}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
+.modal{background:#fff;border-radius:14px;padding:28px;max-width:520px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto}
+.spinner{width:24px;height:24px;border:3px solid #E5E5E5;border-top-color:#111;border-radius:50%;animation:spin .6s linear infinite;margin:0 auto}
+.loading-page{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#888;font-size:14px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#4ADE80;display:inline-block;margin-right:6px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.flex{display:flex}.flex-col{flex-direction:column}.items-center{align-items:center}.items-start{align-items:start}
+.justify-between{justify-content:space-between}.justify-center{justify-content:center}
+.gap-2{gap:8px}.gap-3{gap:12px}.gap-4{gap:16px}.flex-1{flex:1}
+.grid{display:grid}.grid-1{grid-template-columns:1fr}
+.text-center{text-align:center}
+.space-y-3>*+*{margin-top:12px}.space-y-4>*+*{margin-top:16px}
+.mb-1{margin-bottom:4px}.mb-2{margin-bottom:8px}.mb-3{margin-bottom:12px}.mb-4{margin-bottom:16px}.mb-6{margin-bottom:24px}
+.mt-1{margin-top:4px}.mt-2{margin-top:8px}.mt-3{margin-top:12px}.mt-4{margin-top:16px}.mt-6{margin-top:24px}
+.overflow-x-auto{overflow-x:auto}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#FAFAFA}::-webkit-scrollbar-thumb{background:#D4D4D4;border-radius:3px}
+@media(min-width:768px){.md-grid-2{grid-template-columns:repeat(2,1fr)}.md-grid-3{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:767px){.hide-mobile{display:none}.wrap,.wrap-md,.wrap-lg{padding:16px}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ============================================================
+// LAEN380 QUIZ PORTAL — Firebase Live-Sync Edition
+// ============================================================
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  FIREBASE CONFIG — PASTE YOUR OWN CONFIG VALUES BELOW       ║
+// ║  Get these from: Firebase Console → Project Settings → Web  ║
+// ╚══════════════════════════════════════════════════════════════╝
+const firebaseConfig = {
+  apiKey:            "AIzaSyDUJi7f12pWJdH9ay-BtrfhOSlJKowwBJc",
+  authDomain:        "laen380-quiz.firebaseapp.com",
+  projectId:         "laen380-quiz",
+  storageBucket:     "laen380-quiz.firebasestorage.app",
+  messagingSenderId: "48071944799",
+  appId:             "1:48071944799:web:48e1d45d9e55fcfd5249ea"
+};
+
+// --- Initialize Firebase ---
+let db;
+let firebaseReady = false;
+try {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+  // Enable offline persistence so quiz works even with spotty internet
+  db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
+  firebaseReady = !firebaseConfig.apiKey.includes('PASTE');
+} catch(e) {
+  console.warn('Firebase init failed, falling back to localStorage:', e);
+}
+
+const TEACHER_USER='yungie', TEACHER_PASS='yungie1234', MAX_ATTEMPTS=3, TOTAL_PARTS=8;
+
+// ---- SESSION (always local) ----
+function getUser(){return JSON.parse(sessionStorage.getItem('laen380_user')||'null')}
+function setUser(u){sessionStorage.setItem('laen380_user',JSON.stringify(u))}
+
+// ---- DATA LAYER — Firebase with localStorage fallback ----
+function defaultUserData(email){
+  const d={name:'',email,parts:{},savedProgress:{}};
+  for(let i=1;i<=TOTAL_PARTS;i++) d.parts[i]={attempts:0,scores:[],bestScore:0};
+  return d;
+}
+
+async function getUserData(email){
+  if(firebaseReady){
+    try{
+      const doc=await db.collection('students').doc(email).get();
+      if(doc.exists){
+        const data=doc.data();
+        // Ensure all parts exist (defensive)
+        for(let i=1;i<=TOTAL_PARTS;i++) if(!data.parts[i]) data.parts[i]={attempts:0,scores:[],bestScore:0};
+        if(!data.savedProgress) data.savedProgress={};
+        return data;
+      } else {
+        const d=defaultUserData(email);
+        await db.collection('students').doc(email).set(d);
+        return d;
+      }
+    }catch(e){console.error('Firestore read error:',e); return localGetUser(email);}
+  }
+  return localGetUser(email);
+}
+
+async function saveUserData(email,data){
+  if(firebaseReady){
+    try{await db.collection('students').doc(email).set(data);return;}
+    catch(e){console.error('Firestore write error:',e);}
+  }
+  localSaveUser(email,data);
+}
+
+async function getAllStudents(){
+  if(firebaseReady){
+    try{
+      const snap=await db.collection('students').get();
+      return snap.docs.map(d=>d.data());
+    }catch(e){console.error('Firestore read all error:',e);return localGetAllStudents();}
+  }
+  return localGetAllStudents();
+}
+
+// localStorage fallback
+function localGetUser(email){
+  const s=JSON.parse(localStorage.getItem('laen380_data')||'{}');
+  if(!s.users)s.users={};
+  if(!s.users[email]){s.users[email]=defaultUserData(email);localStorage.setItem('laen380_data',JSON.stringify(s));}
+  return s.users[email];
+}
+function localSaveUser(email,data){
+  const s=JSON.parse(localStorage.getItem('laen380_data')||'{}');
+  if(!s.users)s.users={};s.users[email]=data;
+  localStorage.setItem('laen380_data',JSON.stringify(s));
+}
+function localGetAllStudents(){
+  const s=JSON.parse(localStorage.getItem('laen380_data')||'{}');
+  return Object.values(s.users||{});
+}
+
+// ---- UTILITIES ----
+function speakText(text){
+  if('speechSynthesis' in window){window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);u.rate=0.9;u.pitch=1;u.lang='en-US';
+  const v=window.speechSynthesis.getVoices(),e=v.find(x=>x.lang.startsWith('en'));
+  if(e)u.voice=e;window.speechSynthesis.speak(u);}
+}
+function launchConfetti(){
+  const c=['#111','#666','#999','#DDD','#4ADE80','#888'];
+  for(let i=0;i<35;i++){const el=document.createElement('div');el.className='confetti-piece';
+  el.style.left=Math.random()*100+'vw';el.style.width=(Math.random()*8+4)+'px';
+  el.style.height=(Math.random()*8+4)+'px';el.style.background=c[Math.floor(Math.random()*c.length)];
+  el.style.borderRadius=Math.random()>.5?'50%':'2px';el.style.animationDelay=Math.random()*2+'s';
+  el.style.animationDuration=(Math.random()*2+2)+'s';document.body.appendChild(el);
+  setTimeout(()=>el.remove(),5000);}
+}
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+
+const app=document.getElementById('app');
+function render(h){app.innerHTML=h}
+function showLoading(msg='Loading...'){render(`<div class="loading-page fade-in"><div class="spinner"></div><p>${msg}</p></div>`)}
+
+
+const QUIZ_DATA = {
+  1: {
+    title: "Patterns of Organization",
+    icon: "🏗️",
+    color: "brand",
+    description: "Identify the organizational pattern used in short presentation excerpts.",
+    totalQ: 15,
+    questions: [
+      { id:1, type:'mcq', audio:"Today, I want to walk you through the evolution of artificial intelligence. It all began in 1956 at the Dartmouth Conference, where the term was first coined. By the 1980s, expert systems emerged. In the 2000s, machine learning took center stage. And now, in the 2020s, generative AI is transforming every industry.", q:"What organizational pattern does this presentation use?", options:["Chronological","Spatial","Cause-Effect","Topical"], correct:0 },
+      { id:2, type:'mcq', audio:"Imagine walking into the new campus library. On your left, you'll find the collaborative learning zones with modular furniture. Straight ahead is the three-story atrium housing the digital media center. On the upper floors, you'll discover quiet study pods, and the rooftop features an open-air reading garden.", q:"What organizational pattern does this presentation use?", options:["Spatial","Chronological","Problem-Solution","Compare and Contrast"], correct:0 },
+      { id:3, type:'mcq', audio:"Our university faces a serious problem: student mental health issues have increased by 40% since 2020. Counseling centers are overwhelmed, wait times exceed three weeks, and many students simply give up seeking help. I propose three solutions: expanding telehealth counseling, training peer support ambassadors, and integrating wellness modules into every course.", q:"What organizational pattern does this presentation use?", options:["Cause-Effect","Problem-Solution","Argumentative","Monroe's Motivated Sequence"], correct:1 },
+      { id:4, type:'mcq', audio:"Social media addiction among teenagers leads to several consequences. First, excessive screen time causes disrupted sleep patterns. Second, constant comparison with curated online profiles results in lower self-esteem. Third, reduced face-to-face interaction weakens interpersonal skills. These combined effects contribute to rising anxiety and depression rates.", q:"What organizational pattern does this presentation use?", options:["Problem-Solution","Topical","Cause-Effect","Sequential"], correct:2 },
+      { id:5, type:'mcq', audio:"Let me compare two popular renewable energy sources. Solar panels are cheaper to install and maintain, work silently, but depend on sunlight availability. Wind turbines generate power day and night, occupy less ground space, but produce noise and require higher initial investment. Both contribute significantly to reducing carbon emissions.", q:"What organizational pattern does this presentation use?", options:["Topical","Compare and Contrast","Cause-Effect","Definition"], correct:1 },
+      { id:6, type:'mcq', audio:"Do you know that every eight seconds, a student drops out of high school in the United States? That is a crisis. These young people face limited career prospects and lower lifetime earnings. We need to act. Schools should implement early-warning systems to identify at-risk students. Imagine a future where every student graduates prepared for success. Start by supporting your local mentoring program today.", q:"What organizational pattern does this presentation use?", options:["Problem-Solution","Chronological","Monroe's Motivated Sequence","Argumentative"], correct:2 },
+      { id:7, type:'mcq', audio:"To prepare an effective academic presentation, follow these five steps. Step one: research your topic thoroughly using credible sources. Step two: create an outline with clear main points. Step three: design visual aids that support your message. Step four: rehearse your delivery at least three times. Step five: prepare for audience questions.", q:"What organizational pattern does this presentation use?", options:["Sequential","Chronological","Topical","Spatial"], correct:0 },
+      { id:8, type:'mcq', audio:"The electric vehicle market can be understood through three key aspects. First, the technology: battery range now exceeds 400 kilometers per charge. Second, the economics: total cost of ownership is now competitive with gasoline vehicles. Third, the infrastructure: charging networks are expanding rapidly across Southeast Asia.", q:"What organizational pattern does this presentation use?", options:["Sequential","Cause-Effect","Topical","Problem-Solution"], correct:2 },
+      { id:9, type:'mcq', audio:"I firmly believe that universities should mandate a foreign language requirement for all undergraduate students. Research from the British Council shows multilingual graduates earn 15% more. Moreover, language learning enhances cognitive flexibility and cross-cultural competence. Critics argue this adds workload, but the professional advantages clearly outweigh the costs.", q:"What organizational pattern does this presentation use?", options:["Compare and Contrast","Cause-Effect","Definition","Argumentative"], correct:3 },
+      { id:10, type:'mcq', audio:"What exactly is design thinking? It is a human-centered approach to innovation that draws from the designer's toolkit to integrate the needs of people, the possibilities of technology, and the requirements for business success. It is not simply about aesthetics. Rather, it is a methodology for creative problem-solving that emphasizes empathy and iteration.", q:"What organizational pattern does this presentation use?", options:["Argumentative","Problem-Solution","Definition","Topical"], correct:2 },
+      { id:11, type:'mcq', audio:"Let me start with the general principle: effective communication is the foundation of professional success. Now let me support this with specifics. In a 2024 LinkedIn survey, 92% of hiring managers ranked communication as their top desired skill. At Mahidol University, students who completed presentation courses reported 35% higher internship placement rates.", q:"What organizational pattern does this presentation use?", options:["Inductive","Deductive","Chronological","Topical"], correct:1 },
+      { id:12, type:'mcq', audio:"First, consider this observation: Thailand's air pollution levels spike every February. Next, note that hospital admissions for respiratory illness rise 28% during the same period. Additionally, outdoor exercise participation drops by 45%. School attendance falls by 12%. All these specific pieces of evidence point to one conclusion: seasonal air pollution creates a public health emergency requiring immediate policy action.", q:"What organizational pattern does this presentation use?", options:["Deductive","Inductive","Cause-Effect","Problem-Solution"], correct:1 },
+      { id:13, type:'mcq', audio:"Today I want to discuss three reasons why plant-based diets are gaining popularity. The cost of meat is rising sharply due to increased corn and feed prices. Health research shows that meat consumption is linked to heart disease and certain cancers. Environmental data reveals that livestock farming contributes significantly to greenhouse gas emissions.", q:"What organizational pattern does this presentation use?", options:["Compare and Contrast","Topical","Argumentative","Cause-Effect"], correct:2 },
+      { id:14, type:'mcq', audio:"The history of pandemics has shaped modern medicine profoundly. The Black Death in the 14th century led to the concept of quarantine. The 1918 Spanish Flu prompted the development of public health infrastructure. The HIV/AIDS crisis of the 1980s revolutionized pharmaceutical research. And COVID-19 accelerated vaccine technology to unprecedented levels.", q:"What organizational pattern does this presentation use?", options:["Spatial","Chronological","Sequential","Topical"], correct:1 },
+      { id:15, type:'mcq', audio:"Picture this scenario at a university dormitory. The main entrance has no wheelchair ramp. The elevator buttons lack braille labels. Hallway widths do not meet accessibility standards. This problem affects 8% of enrolled students with physical disabilities. The solution is a comprehensive accessibility audit and renovation plan costing only 2% of the annual facility budget.", q:"What organizational pattern does this presentation use?", options:["Spatial then Problem-Solution","Chronological","Pure Spatial","Compare and Contrast"], correct:0 }
+    ]
+  },
+  2: {
+    title: "Presentation Body — Triple E's",
+    icon: "📝",
+    color: "warm",
+    description: "Identify and reorder presentation body paragraphs using Evidence, Explanation, and Examples.",
+    totalQ: 20,
+    questions: [
+      { id:1, type:'mcq', q:"In the Triple E's framework, what is the correct sequence for building a presentation body paragraph?", options:["Example → Evidence → Explanation","Evidence → Explanation → Example","Explanation → Example → Evidence","Claim → Evidence → Explanation → Example"], correct:3 },
+      { id:2, type:'mcq', q:"Which of the following best describes the role of 'Evidence' in the Triple E's framework?", options:["It provides a relatable real-life story","It interprets data for the audience","It establishes credibility with factual data","It transitions between main points"], correct:2 },
+      { id:3, type:'mcq', q:"'A meta-analysis of 225 studies found that active learning reduces failure rates by 33%.' This sentence is an example of:", options:["Explanation","Example","Evidence","Claim"], correct:2 },
+      { id:4, type:'mcq', q:"'Active tasks engage students in problem-solving and peer discussion, promoting deeper processing and more durable learning than passive listening.' This sentence is an example of:", options:["Evidence","Explanation","Example","Claim"], correct:1 },
+      { id:5, type:'mcq', q:"'In one biology course, replacing portions of lecture with peer teaching raised student confidence and improved subsequent performance.' This sentence is an example of:", options:["Evidence","Explanation","Example","Claim"], correct:2 },
+      { id:6, type:'mcq', q:"What happens when a presentation body uses evidence without explanation?", options:["It becomes persuasive but abstract","It remains informed but confused","It lacks credibility entirely","It becomes engaging but unsupported"], correct:1 },
+      { id:7, type:'mcq', q:"What happens when a presentation body uses examples without evidence?", options:["It remains abstract and theoretical","It becomes informative but boring","It lacks credibility","It becomes clear but unpersuasive"], correct:2 },
+      { id:8, type:'reorder', q:"Arrange these sentences into the correct Triple E's order for a paragraph about telemedicine:", items:["Telemedicine significantly improves healthcare accessibility and patient outcomes for underserved populations.","Department of Health data show adoption rose 38% annually from 2019 to 2023, with 94% patient satisfaction.","Telemedicine removes travel barriers, shortens wait times, and supports chronic disease follow-up via remote monitoring.","Maria, aged 68, saved a 90-minute trip by switching to monthly virtual visits, and her health indicators improved markedly."], correctOrder:[0,1,2,3] },
+      { id:9, type:'reorder', q:"Arrange these sentences into the correct Triple E's order for a paragraph about renewable energy:", items:["Rapid transition to renewable energy is essential for limiting global warming.","Global renewable capacity grew 45% from 2015 to 2023, reaching 4,100 GW, with solar costs dropping 90%.","Renewable energy eliminates fossil fuel emissions while improving air quality and public health.","Denmark generates 83% of electricity from renewables, reducing emissions by 80% since 1990."], correctOrder:[0,1,2,3] },
+      { id:10, type:'reorder', q:"Arrange these sentences for a paragraph about mental health campaigns:", items:["Mental health awareness campaigns significantly reduce stigma and increase help-seeking behavior.","The WHO reports stigma reduction campaigns decreased negative attitudes by 35–40% in participating communities.","Awareness campaigns normalize mental health discussions and challenge harmful stereotypes.","Following Australia's 'Beyond Blue' campaign, youth mental health service utilization increased 42%."], correctOrder:[0,1,2,3] },
+      { id:11, type:'mcq', q:"Which component of the Triple E's creates 'trust' in the audience?", options:["Evidence","Explanation","Example","Transition words"], correct:0 },
+      { id:12, type:'mcq', q:"Which component of the Triple E's creates 'understanding' in the audience?", options:["Evidence","Explanation","Example","Hook"], correct:1 },
+      { id:13, type:'mcq', q:"Which component of the Triple E's creates 'memorability' in the audience?", options:["Evidence","Explanation","Example","Statistics"], correct:2 },
+      { id:14, type:'mcq', q:"'CRISPR enables precise DNA editing with unprecedented accuracy, allowing scientists to correct genetic mutations at their source.' Identify the Triple E component:", options:["Evidence","Explanation","Example","Claim"], correct:1 },
+      { id:15, type:'mcq', q:"'The global CRISPR market is projected to reach $20 billion by 2030.' Identify the Triple E component:", options:["Evidence","Explanation","Example","Claim"], correct:0 },
+      { id:16, type:'reorder', q:"Arrange these sentences about active learning into correct Triple E's order:", items:["Active learning markedly improves student retention compared to pure lecture formats.","A large meta-analysis reports consistent gains in scores and reduced failure rates with active learning.","Active tasks engage students in problem-solving, promoting deeper processing than passive listening.","In one biology course, replacing portions of lecture with peer teaching raised student confidence."], correctOrder:[0,1,2,3] },
+      { id:17, type:'mcq', q:"A presenter says: 'For instance, at Stanford University, the introduction of AI tutoring assistants led to a 22% improvement in first-year calculus pass rates.' This is best classified as:", options:["A claim establishing the topic","Statistical evidence from research","An explanation of a mechanism","A concrete example illustrating a point"], correct:3 },
+      { id:18, type:'mcq', q:"Which statement best represents a 'Claim' that would begin a Triple E's paragraph?", options:["According to WHO, air pollution kills 7 million people annually.","Air pollution causes respiratory inflammation through particulate matter inhalation.","In Bangkok, PM2.5 levels exceeded safe limits for 90 consecutive days in 2023.","Urban air pollution represents one of the most pressing public health challenges of our generation."], correct:3 },
+      { id:19, type:'mcq', q:"If a presenter gives statistics but does not explain what they mean, the audience is likely to feel:", options:["Engaged and motivated","Informed but confused","Emotionally connected","Fully persuaded"], correct:1 },
+      { id:20, type:'mcq', q:"Best practice in the Triple E's framework includes:", options:["Using only one type of E to keep it simple","Ensuring smooth transitions between the three E's","Placing examples before evidence always","Using the same structure for every paragraph"], correct:1 }
+    ]
+  },
+  3: {
+    title: "Presentation Scenarios",
+    icon: "🎭",
+    color: "sage",
+    description: "Analyze critical presentation problems and select the best solutions.",
+    totalQ: 15,
+    questions: [
+      { id:1, type:'mcq', q:"During a presentation, the projector suddenly stops working. What is the BEST immediate response?", options:["Cancel the presentation and reschedule","Continue presenting using verbal descriptions and handouts while asking a colleague to troubleshoot","Spend 15 minutes trying to fix the projector while the audience waits","Ask the audience to view slides on your laptop screen"], correct:1 },
+      { id:2, type:'mcq', q:"You arrive at the venue and discover the room is set in theater style, but your presentation requires group activities. What should you do?", options:["Skip the group activities entirely","Ask participants to rearrange chairs into small circles before you begin","Proceed with theater style and modify activities to work with pairs instead","Complain to the organizer and wait for them to fix it"], correct:1 },
+      { id:3, type:'mcq', q:"Your audience consists of both native and non-native English speakers at varying proficiency levels. What is the BEST strategy?", options:["Speak only to the native speakers since they will understand best","Use simpler vocabulary, speak at a moderate pace, and supplement with clear visuals","Provide a written translation of your entire script beforehand","Ask non-native speakers to review the content at home afterward"], correct:1 },
+      { id:4, type:'mcq', q:"A hostile audience member interrupts your presentation to challenge your data. What is the BEST response?", options:["Ignore them and continue presenting","Argue back with stronger evidence immediately","Acknowledge their point respectfully, offer to discuss further after the session, and redirect to your next point","Ask security to remove the person"], correct:2 },
+      { id:5, type:'mcq', q:"You discover 10 minutes before your presentation that your USB drive is corrupted. What is the BEST approach?", options:["Cancel the presentation","Check if you can access your file from cloud storage or email, and present from a backup","Borrow someone else's presentation slides","Present without any slides, relying entirely on memory"], correct:1 },
+      { id:6, type:'mcq', q:"The room temperature is extremely cold and the audience appears uncomfortable. The thermostat is locked. What should you do?", options:["Ignore it since you cannot control the thermostat","Acknowledge the issue, suggest a short energizer activity, and ask the organizer to adjust it","Tell everyone to bring jackets next time","Shorten your presentation to minimize discomfort"], correct:1 },
+      { id:7, type:'mcq', q:"You planned a 30-minute presentation, but the organizer tells you that you now have only 15 minutes. What is the BEST strategy?", options:["Speak twice as fast to cover everything","Cut your presentation to key points: strongest hook, 2–3 main ideas with evidence, and a clear conclusion","Skip the introduction and conclusion to save time","Ask to present at a different time"], correct:1 },
+      { id:8, type:'mcq', q:"During a Q&A session, an audience member asks a question completely unrelated to your topic. What is the BEST response?", options:["Answer it fully to show your broad knowledge","Say 'That's a bit outside today's scope, but I'd be happy to discuss it after the session' and redirect","Tell them their question is irrelevant","Ignore the question and call on someone else"], correct:1 },
+      { id:9, type:'mcq', q:"Your co-presenter fails to show up. You are expected to cover their section as well. What should you do?", options:["Only present your section and explain the absence","Briefly summarize the missing section's key points based on your knowledge and focus on your own prepared content","Improvise the entire missing section in detail","Ask the audience to skip that section"], correct:1 },
+      { id:10, type:'mcq', q:"You notice that most of the audience is looking at their phones during your presentation. What should you do?", options:["Speak louder to get their attention","Pause and re-engage with an interactive question, poll, or brief activity","Confront the audience about being disrespectful","Speed up to finish quickly"], correct:1 },
+      { id:11, type:'mcq', q:"A presenter analyzes their audience beforehand and discovers most attendees are senior executives with limited time. Which is the BEST preparation adjustment?", options:["Prepare a detailed 60-minute technical deep-dive","Lead with key conclusions and recommendations, keep it concise, and offer detailed data as supplementary material","Use many animated slides to keep them entertained","Begin with a 10-minute icebreaker activity"], correct:1 },
+      { id:12, type:'mcq', q:"The microphone produces a loud feedback screech during your opening. What should you do?", options:["Shout over the noise","Step back from the microphone, adjust your distance, and if it persists, project your voice naturally without it while requesting technical support","Stop presenting until the audio team fixes it completely","Switch to a whisper to avoid triggering feedback"], correct:1 },
+      { id:13, type:'mcq', q:"You are presenting in a large lecture hall, but only 12 students attend out of an expected 80. What is the BEST approach?", options:["Present exactly as planned for 80 people","Adapt by inviting the 12 attendees to sit closer, create a more conversational and interactive atmosphere","Cancel the session due to low attendance","Express disappointment about the low turnout"], correct:1 },
+      { id:14, type:'mcq', q:"During a team presentation, your teammate gives incorrect information. What is the BEST way to handle it?", options:["Interrupt and correct them immediately in front of everyone","Wait for your turn, then diplomatically say 'I'd like to add some context to what was mentioned earlier' and provide the accurate information","Ignore it to avoid conflict","Apologize to the audience on behalf of your teammate"], correct:1 },
+      { id:15, type:'mcq', q:"Before your presentation, you learn that the audience has very strong opinions that oppose your argument. What is the BEST strategy?", options:["Avoid the controversial aspects of your topic","Acknowledge the opposing viewpoint respectfully, present your evidence clearly, and frame your argument as an alternative perspective worth considering","Argue aggressively to overpower opposition","Change your topic entirely to avoid conflict"], correct:1 }
+    ]
+  },
+  4: {
+    title: "Language Mechanics",
+    icon: "🔗",
+    color: "sky",
+    description: "Practice discourse markers for cohesion and coherence in presentations.",
+    totalQ: 20,
+    questions: [
+      { id:1, type:'mcq', q:"Choose the correct discourse marker: 'Climate change poses severe risks. ______, immediate policy action is required.'", options:["However","Therefore","Meanwhile","For instance"], correct:1 },
+      { id:2, type:'mcq', q:"Choose the correct discourse marker: 'The study found significant improvements in test scores. ______, there are some limitations worth noting.'", options:["Furthermore","In addition","However","Therefore"], correct:2 },
+      { id:3, type:'mcq', q:"Choose the correct discourse marker: 'Electric vehicles reduce emissions. ______, they lower long-term fuel costs for consumers.'", options:["Nevertheless","On the contrary","In contrast","Moreover"], correct:3 },
+      { id:4, type:'mcq', q:"Choose the correct discourse marker: 'Let me move on to my second point. ______, I would like to discuss the economic implications.'", options:["In contrast","Specifically","As a result","Nevertheless"], correct:1 },
+      { id:5, type:'mcq', q:"Choose the best signpost: 'That covers the environmental factors. ______ the social impact.'", options:["Turning now to","However","In conclusion","As I mentioned"], correct:0 },
+      { id:6, type:'mcq', q:"Choose the correct marker: 'Many students prefer online learning. ______, studies show that face-to-face interaction improves retention.'", options:["Similarly","On the other hand","In addition","As a result"], correct:1 },
+      { id:7, type:'mcq', q:"Which discourse marker best introduces a summary? '______, the evidence strongly supports the adoption of renewable energy.'", options:["Furthermore","For example","In conclusion","Meanwhile"], correct:2 },
+      { id:8, type:'mcq', q:"Choose the correct marker: 'Thailand's GDP grew by 3.2% last year. ______, the tourism sector contributed nearly 20% of this growth.'", options:["However","In particular","On the contrary","Nevertheless"], correct:1 },
+      { id:9, type:'mcq', q:"Which signpost is used to refer back to a previous point?", options:["As I will discuss later","To summarize","As I mentioned earlier","Let me digress for a moment"], correct:2 },
+      { id:10, type:'mcq', q:"Choose the correct marker: 'The initial results were promising. ______, the long-term data revealed unexpected challenges.'", options:["Similarly","Furthermore","Consequently","However"], correct:3 },
+      { id:11, type:'mcq', q:"Which marker best introduces an example? 'Many Asian countries are investing in AI. ______, Singapore has allocated $500 million to AI research.'", options:["However","For instance","Therefore","In contrast"], correct:1 },
+      { id:12, type:'mcq', q:"Choose the correct sequence marker: '______, let us examine the causes. ______, we will explore the effects. ______, I will propose solutions.'", options:["First / Second / Finally","However / Moreover / Therefore","Similarly / In addition / In conclusion","For example / Specifically / As a result"], correct:0 },
+      { id:13, type:'mcq', q:"'Let me put that in a nutshell.' This signpost is used to:", options:["Change direction from the original plan","Give a deeper analysis of a point","Give just the basic information","Refer to an earlier point"], correct:2 },
+      { id:14, type:'mcq', q:"'I'd like to expand on that.' This signpost is used to:", options:["Summarize the presentation","Give a deeper analysis","Change the topic","Refer to a later point"], correct:1 },
+      { id:15, type:'mcq', q:"'Let me digress for a moment.' This signpost is used to:", options:["Summarize key points","Refer to an earlier point","Change direction from the original plan","Give a wider perspective"], correct:2 },
+      { id:16, type:'mcq', q:"Choose the correct marker: 'Air pollution affects health. ______, it reduces agricultural productivity and damages ecosystems.'", options:["In contrast","Nevertheless","In addition","However"], correct:2 },
+      { id:17, type:'mcq', q:"Which pair of markers shows contrast?", options:["Furthermore / Moreover","For instance / Specifically","While / In contrast","First / Next"], correct:2 },
+      { id:18, type:'mcq', q:"Choose the correct marker: '______ some critics argue the cost is too high, the long-term savings justify the investment.'", options:["Because","Although","Moreover","For example"], correct:1 },
+      { id:19, type:'mcq', q:"'I will be coming to that later.' This signpost is used to:", options:["Change direction","Refer to an earlier point","Refer to a point coming later","Give basic information"], correct:2 },
+      { id:20, type:'mcq', q:"Choose the best ending marker: '______, I urge each of you to consider the evidence presented today and take action in your own communities.'", options:["Furthermore","For instance","In other words","In closing"], correct:3 }
+    ]
+  },
+  5: {
+    title: "Handling Questions — START Model",
+    icon: "💬",
+    color: "brand",
+    description: "Choose the best responses using the START model (Situation, Task, Action, Result, Takeaway).",
+    totalQ: 20,
+    questions: [
+      { id:1, type:'mcq', q:"Interview question: 'Tell me about a time you showed leadership.' Which response BEST follows the START model?", options:[
+        "I'm a natural leader. I always take charge in group projects and make sure things get done on time. People look up to me.",
+        "During my third year, our capstone team lost motivation after a poor midterm review. As team lead, I organized a retreat, reassigned tasks to match strengths, and introduced weekly stand-ups. We finished with the top grade in our cohort. I learned that leadership means empowering others, not controlling them.",
+        "Leadership is important in every organization. I believe that a good leader should listen, communicate, and be fair to all team members.",
+        "I led a group project once. We had some problems but worked them out. The project was successful in the end."
+      ], correct:1 },
+      { id:2, type:'mcq', q:"Which component of the START model is MISSING from this response? 'In my internship, I had to handle a difficult client. I scheduled multiple meetings and found a compromise. The client renewed their contract.'", options:["Situation","Task","Action","Takeaway"], correct:3 },
+      { id:3, type:'mcq', q:"Interview question: 'Describe a failure and how you recovered.' Which response BEST uses the START model?", options:[
+        "I failed a midterm once but studied harder and did better next time.",
+        "During my final year, I took on a leadership role in a group project. I struggled to delegate effectively, and the project fell behind. Realizing my mistake, I reorganized tasks, sought input from others, and improved communication. We completed the project on time with top marks. I learned that being a good leader means taking action for the benefit of the whole team.",
+        "Everyone fails sometimes. The key is to never give up and keep trying. I always maintain a positive attitude.",
+        "I once made a mistake in a lab report. My professor noticed it and asked me to redo it."
+      ], correct:1 },
+      { id:4, type:'mcq', q:"In the START model, the 'Takeaway' component serves to:", options:["Describe the initial context of the story","List the specific responsibilities you had","Demonstrate growth, self-awareness, and future application","Quantify the outcomes of your actions"], correct:2 },
+      { id:5, type:'mcq', q:"'Picture this: it's midnight, the project deadline is 6 hours away, and our group chat is full of panic.' This opening exemplifies which START component?", options:["Situation — using vivid language to set the scene","Task — describing responsibilities","Action — showing what was done","Result — quantifying the outcome"], correct:0 },
+      { id:6, type:'mcq', q:"Interview question: 'What is your weakness?' Which response BEST applies the START model?", options:[
+        "I don't really have any weaknesses. I'm a perfectionist, which is actually a strength.",
+        "My weakness is that I'm too honest sometimes. But I think honesty is important.",
+        "Earlier in my studies, I struggled with time management. I took on too many projects at once. I began using digital planners and time-blocking, and prioritized tasks. The result was improved grades and on-time submissions. I learned that discipline matters more than sheer effort, and today I carefully evaluate commitments before saying yes.",
+        "I'm not very good at public speaking, but I'm working on it."
+      ], correct:2 },
+      { id:7, type:'mcq', q:"A scholarship interview asks: 'Why should we choose you?' Which response element would be weakest?", options:[
+        "Describing a specific achievement with measurable results",
+        "Saying 'I really want this scholarship and will work very hard'",
+        "Connecting your past experience to the scholarship's mission",
+        "Reflecting on how the opportunity aligns with your goals"
+      ], correct:1 },
+      { id:8, type:'mcq', q:"Which is the BEST 'Action' component for the question 'Tell me about a time you resolved a conflict'?", options:[
+        "I felt uncomfortable about the situation and waited for it to resolve itself.",
+        "I set up structured meetings, encouraged open but respectful discussions, and clarified action steps for each team member.",
+        "Conflict is natural in any team environment.",
+        "We eventually figured things out and moved on."
+      ], correct:1 },
+      { id:9, type:'mcq', q:"Which 'Result' statement is STRONGEST?", options:[
+        "Things worked out well in the end.",
+        "The tension eased, and we delivered the project one week early, earning strong feedback from our professor.",
+        "Everyone was happy with the result.",
+        "The project was completed successfully."
+      ], correct:1 },
+      { id:10, type:'mcq', q:"Which 'Takeaway' statement demonstrates the deepest reflection?", options:[
+        "I learned that teamwork is important.",
+        "I learned that challenges are less about obstacles and more about guiding people toward shared goals. Now I treat conflict as a chance to build stronger collaboration.",
+        "It was a good learning experience overall.",
+        "I won't make the same mistake again."
+      ], correct:1 },
+      { id:11, type:'mcq', q:"During a presentation Q&A, someone challenges your data aggressively. Which response strategy is BEST?", options:[
+        "Validate their concern, then stand firm with your evidence","Ignore the question and move on","Agree with them to avoid conflict","Challenge them back with your own questions"], correct:0 },
+      { id:12, type:'mcq', q:"An audience member asks: 'Can you explain the link between learning styles and learning theories? I'm confused.' This is a:", options:["Challenge question","Expansion question","Clarification question","Off-topic question"], correct:2 },
+      { id:13, type:'mcq', q:"After a presentation, someone says: 'You talked about the ABC model. It was really thought-provoking. Thank you.' This is:", options:["A challenge question","Positive feedback","A clarification request","An off-topic question"], correct:1 },
+      { id:14, type:'mcq', q:"Which response to a hostile question demonstrates the 'empathize' strategy?", options:[
+        "'You're wrong and here's why.'","'I understand your frustration. This is a complex issue, and I appreciate you raising it.'","'That's not what I said at all.'","'Next question please.'"], correct:1 },
+      { id:15, type:'mcq', q:"When receiving an unfocused question you don't understand, the BEST first step is:", options:["Answer it broadly to cover all possibilities","Ask the questioner to repeat or rephrase it","Skip to the next question","Provide a generic answer"], correct:1 },
+      { id:16, type:'mcq', q:"Interview question: 'Tell me about a time you worked under pressure.' Which START opening is MOST effective?", options:[
+        "'I work under pressure all the time.'","'It was the night before our engineering prototype demonstration, and three critical components had failed testing.'","'Pressure is something I handle well.'","'Once I had a deadline that was very tight.'"], correct:1 },
+      { id:17, type:'mcq', q:"Which models are suggested for answering behavioral questions?", options:["STAR, START, SOAR, CAR","PAS, Monroe's Sequence, Hero's Journey","Triple E's, Patterns of Organization","Pixar Pitch, Moth Story Map"], correct:0 },
+      { id:18, type:'mcq', q:"In the START model, what distinguishes it from the STAR model?", options:["START includes 'Technique'","START includes 'Takeaway'","START includes 'Theory'","START includes 'Timeline'"], correct:1 },
+      { id:19, type:'mcq', q:"A weak response to 'What is your biggest challenge?' typically:", options:["Includes a specific story with measurable results","Is too vague with no clear situation and uses cliché takeaways","Uses vivid language to set the scene","Demonstrates growth and self-awareness"], correct:1 },
+      { id:20, type:'mcq', q:"When someone asks an irrelevant question during Q&A, which approach is MOST professional?", options:[
+        "'That's outside today's scope, but I'd be happy to discuss it after the session.'","'That has nothing to do with my presentation.'","'I don't know anything about that topic.'","Simply ignore the question."], correct:0 }
+    ]
+  },
+  6: {
+    title: "Presentation Analyses",
+    icon: "🎬",
+    color: "warm",
+    description: "Watch three video presentations and answer comprehension questions.",
+    totalQ: 21,
+    videos: [
+      { title:"A Great Vacation Idea", url:"https://www.youtube.com/embed/O_aTJ70IWDU", qRange:[1,8] },
+      { title:"Say No to Meat", url:"https://www.youtube.com/embed/G865uGqanPc", qRange:[9,14] },
+      { title:"Malala", url:"https://www.youtube.com/embed/oRMSRTgn9HQ", qRange:[15,21] }
+    ],
+    questions: [
+      { id:1, type:'mcq', q:"(A Great Vacation Idea) What technique does the presenter use to open the presentation?", options:["Generating questions","Telling an anecdote","Providing statistics","Discussing pros and cons"], correct:0 },
+      { id:2, type:'mcq', q:"(A Great Vacation Idea) What is the topic of the presentation?", options:["Vacation options","Volunteer farm stay","Australian native tribes","Great Barrier Reef"], correct:1 },
+      { id:3, type:'mcq', q:"(A Great Vacation Idea) Which is NOT one of the presenter's major points?", options:["Queensland","Farm-stay activities","Suggested accommodations","Prohibited activities"], correct:3 },
+      { id:4, type:'mcq', q:"(A Great Vacation Idea) Which is NOT something you can find in a farm stay?", options:["Organic farming","Cheese production","Fruit picking","Great Barrier Reef"], correct:3 },
+      { id:5, type:'mcq', q:"(A Great Vacation Idea) How does the presenter finish his presentation?", options:["Offering a thought","Calling for an action","Raising a concern","Giving an emotional message"], correct:1 },
+      { id:6, type:'mcq', q:"(A Great Vacation Idea) What is NOT mentioned about Queensland?", options:["Its main cities","Its geographical attribute","Its natural heritage","Its politics"], correct:3 },
+      { id:7, type:'mcq', q:"(A Great Vacation Idea) What is NOT mentioned about a farm-stay volunteer?", options:["Volunteer's work hours","Volunteer's language requirements","Volunteer's outdoor activities","Volunteer's accommodation"], correct:1 },
+      { id:8, type:'mcq', q:"(A Great Vacation Idea) What should someone do for additional farm-stay information?", options:["Apply for a scholarship to go there","Inquire from websites","Contact Queensland Tourist Info Services","Email Bill Bryson"], correct:1 },
+      { id:9, type:'mcq', q:"(Say No to Meat) How does the presenter open her presentation?", options:["Providing personal experience about eating meat","Convincing that eating meat can be useful","Proposing reasons why meat should not be consumed","Offering alternatives to meat"], correct:2 },
+      { id:10, type:'mcq', q:"(Say No to Meat) What is NOT one of the reasons that makes meat pricey?", options:["Corn prices are high","Meat product prices are high","People's costs of living are high","Bean and grain prices are high"], correct:2 },
+      { id:11, type:'mcq', q:"(Say No to Meat) Which is NOT true about health issues?", options:["Eating meat can accelerate heart disease likelihood","Meat contains least visceral fat","Cancer can result from meat consumption","Meat eaters tend to be more obese"], correct:1 },
+      { id:12, type:'mcq', q:"(Say No to Meat) Which is NOT true about environmental issues?", options:["Meat production can cause greenhouse gases","Raising animals is related to climate change","Meat production consumes large amounts of water","Deforestation can cause higher meat prices"], correct:3 },
+      { id:13, type:'mcq', q:"(Say No to Meat) How does the presenter sum up?", options:["Encourage people to stop killing animals","Urging people to take her arguments into consideration","Blaming governments for meat production","Providing food alternatives"], correct:1 },
+      { id:14, type:'mcq', q:"(Say No to Meat) Which is a source of evidence the presenter uses?", options:["Personal anecdote","Statistical data","Analogy and metaphor","Department of Forestry"], correct:1 },
+      { id:15, type:'mcq', q:"(Malala) How does the presenter open the introduction?", options:["Giving a reason why they chose Malala","Comparing Malala to other famous women","Asking a rhetorical question","Telling the audience about Malala's family"], correct:0 },
+      { id:16, type:'mcq', q:"(Malala) What is accurate about Malala based on the presentation?", options:["She was born before 2000","She has two sisters and two brothers","Malala's father was once a soldier","Malala used a false pen name"], correct:3 },
+      { id:17, type:'mcq', q:"(Malala) Which is NOT mentioned about Malala's shooting?", options:["The penalties the culprits were given","The location of the shooting","The date of the shooting","The consequences of the shooting"], correct:0 },
+      { id:18, type:'mcq', q:"(Malala) Why is 'I am Malala' mentioned?", options:["To exemplify an innocent victim","To raise awareness about holocaust","To illustrate a campaign for education","To argue Malala's fame"], correct:2 },
+      { id:19, type:'mcq', q:"(Malala) Which is NOT back-up evidence that Malala is influential?", options:["Her Time magazine cover","Her 'I am Malala' book","Her Peace Prize","Her withdrawal from UN"], correct:3 },
+      { id:20, type:'mcq', q:"(Malala) The following are Malala's character attributes EXCEPT:", options:["Courage","Human rights values","Communication skills","Feminism"], correct:3 },
+      { id:21, type:'mcq', q:"(Malala) What technique does the presenter use to end?", options:["Call for action","Simile","Summarizing","Emotion"], correct:3 }
+    ]
+  },
+  7: {
+    title: "Art of Storytelling",
+    icon: "📖",
+    color: "sage",
+    description: "Apply storytelling frameworks for persuasion in presentations.",
+    totalQ: 15,
+    questions: [
+      { id:1, type:'mcq', q:"According to the science of storytelling, stories activate the 'whole brain' and have approximately what retention rate compared to facts alone?", options:["Facts: 5%, Stories: 65%","Facts: 30%, Stories: 50%","Facts: 20%, Stories: 40%","Facts: 10%, Stories: 35%"], correct:0 },
+      { id:2, type:'mcq', q:"Monroe's Motivated Sequence follows which order?", options:["Need → Attention → Action → Satisfaction → Visualization","Attention → Need → Satisfaction → Visualization → Action","Visualization → Need → Attention → Satisfaction → Action","Attention → Satisfaction → Need → Action → Visualization"], correct:1 },
+      { id:3, type:'mcq', q:"In the Hero's Journey framework, what role should YOUR brand/product play?", options:["The Hero","The Villain","The Guide (like Yoda, not Luke)","The Narrator"], correct:2 },
+      { id:4, type:'mcq', q:"The PAS formula stands for:", options:["Plan, Achieve, Succeed","Problem, Agitate, Solve","Position, Analyze, Strategize","Purpose, Action, Summary"], correct:1 },
+      { id:5, type:'mcq', q:"'Once upon a time... Every day... One day... Because of that... Because of that... Until finally...' This is the structure of:", options:["Monroe's Motivated Sequence","The Hero's Journey","The Pixar Pitch","The PAS Formula"], correct:2 },
+      { id:6, type:'mcq', q:"What makes the Pixar Pitch effective?", options:["It uses emotional manipulation","It forces causality — each step is a consequence of the previous","It is the shortest framework available","It relies on famous character archetypes"], correct:1 },
+      { id:7, type:'mcq', q:"'Imagine waking up at 3 AM to the sound of shattering glass downstairs.' In Monroe's Sequence, this is the _____ step.", options:["Need","Satisfaction","Attention","Visualization"], correct:2 },
+      { id:8, type:'mcq', q:"Kodak's story (refusing to embrace digital photography and declining) is an example of which of Booker's 7 Basic Plots?", options:["Rags to Riches","Overcoming the Monster","Tragedy","Rebirth"], correct:2 },
+      { id:9, type:'mcq', q:"LEGO's story (near bankruptcy in 2003, returning to core values, and rising again) is an example of:", options:["The Quest","Tragedy","Comedy","Rebirth"], correct:3 },
+      { id:10, type:'mcq', q:"According to the Strategic Narrative framework (Andy Raskin), the correct sequence is:", options:["Name the Change → Winners & Losers → Promised Land → Magic Gifts → Evidence","Evidence → Promised Land → Winners & Losers → Magic Gifts → Name the Change","Magic Gifts → Name the Change → Evidence → Winners & Losers → Promised Land","Promised Land → Name the Change → Winners & Losers → Evidence → Magic Gifts"], correct:0 },
+      { id:11, type:'mcq', q:"Thai advertisements (like Thai Life Insurance's 'Unsung Hero') are renowned for which storytelling technique?", options:["Rational product comparisons","Emotional compounding — building layers of small acts to a powerful payoff","Quick, aggressive sales pitches","Celebrity endorsements"], correct:1 },
+      { id:12, type:'mcq', q:"'The pain of losing is psychologically twice as powerful as the pleasure of gaining.' This describes which cognitive bias?", options:["Social Proof","Anchoring","Loss Aversion","Framing Effect"], correct:2 },
+      { id:13, type:'mcq', q:"If you need to deliver a persuasive sales pitch quickly, which framework is MOST appropriate?", options:["The Hero's Journey","The Pixar Pitch","Monroe's Motivated Sequence","The PAS Formula"], correct:3 },
+      { id:14, type:'mcq', q:"In the Freytag's Pyramid structure, the 'Climax' in a product pitch is:", options:["The introduction of the hero","The moment your product saves the day","The description of the new normal","The exposition of the status quo"], correct:1 },
+      { id:15, type:'mcq', q:"What distinguishes a 'story pitch' from a 'dull pitch'?", options:["Story pitches use more technical jargon","Story pitches are feature-focused and data-heavy","Story pitches are emotional, benefit-focused, and memorable","Story pitches avoid mentioning the product entirely"], correct:2 }
+    ]
+  },
+  8: {
+    title: "Spectrum of Appropriateness",
+    icon: "📊",
+    color: "sky",
+    description: "Arrange expressions from very casual to very polite/formal.",
+    totalQ: 15,
+    questions: [
+      { id:1, type:'reorder', q:"Arrange from MOST CASUAL to MOST FORMAL — Greeting someone:", items:["Hey!","Hi there.","Hello.","Good morning.","Greetings, it is a pleasure to meet you."], correctOrder:[0,1,2,3,4] },
+      { id:2, type:'reorder', q:"Arrange from MOST CASUAL to MOST FORMAL — Asking for help:", items:["Can you help me out?","Could you help me with this?","Would you mind assisting me?","I would be grateful if you could provide your assistance."], correctOrder:[0,1,2,3] },
+      { id:3, type:'reorder', q:"Arrange from MOST CASUAL to MOST FORMAL — Saying thank you:", items:["Thanks!","Thank you.","Thank you very much.","I sincerely appreciate your assistance."], correctOrder:[0,1,2,3] },
+      { id:4, type:'reorder', q:"Arrange from MOST CASUAL to MOST FORMAL — Disagreeing:", items:["No way!","I don't think so.","I see your point, but I have a different view.","With all due respect, I would like to offer an alternative perspective."], correctOrder:[0,1,2,3] },
+      { id:5, type:'reorder', q:"Arrange from MOST CASUAL to MOST FORMAL — Making a request:", items:["Give me that report.","Can I have the report?","Could you send me the report when you get a chance?","I would appreciate it if you could forward the report at your earliest convenience."], correctOrder:[0,1,2,3] },
+      { id:6, type:'reorder', q:"Arrange from MOST CASUAL to MOST FORMAL — Apologizing:", items:["My bad.","Sorry about that.","I apologize for the inconvenience.","Please accept my sincerest apologies for this oversight."], correctOrder:[0,1,2,3] },
+      { id:7, type:'reorder', q:"Arrange from MOST CASUAL to MOST FORMAL — Ending an email:", items:["Later!","Cheers,","Best regards,","Yours respectfully,"], correctOrder:[0,1,2,3] },
+      { id:8, type:'reorder', q:"Arrange from MOST CASUAL to MOST FORMAL — Asking for someone's opinion:", items:["What do you think?","How do you feel about this?","May I ask for your perspective on this matter?","I would greatly value your professional opinion on this issue."], correctOrder:[0,1,2,3] },
+      { id:9, type:'reorder', q:"Arrange from MOST CASUAL to MOST FORMAL — Declining an invitation:", items:["Nah, I can't make it.","Sorry, I won't be able to come.","Unfortunately, I have a prior commitment.","I regret to inform you that I will be unable to attend."], correctOrder:[0,1,2,3] },
+      { id:10, type:'reorder', q:"Arrange from MOST CASUAL to MOST FORMAL — Starting a presentation:", items:["So, let's get into it!","Hi everyone, let's begin.","Good morning. Thank you for being here today.","Distinguished guests, it is an honor to address you this morning."], correctOrder:[0,1,2,3] },
+      { id:11, type:'reorder', q:"Arrange from MOST CASUAL to MOST FORMAL — Interrupting politely:", items:["Hold on a sec.","Sorry, can I jump in?","Excuse me, may I add something?","If I may interject, I would like to contribute a point."], correctOrder:[0,1,2,3] },
+      { id:12, type:'reorder', q:"Arrange from MOST CASUAL to MOST FORMAL — Suggesting an idea:", items:["How about we just do it this way?","What if we tried a different approach?","I would like to suggest an alternative method.","For your consideration, I propose the following course of action."], correctOrder:[0,1,2,3] },
+      { id:13, type:'reorder', q:"Arrange from MOST CASUAL to MOST FORMAL — Expressing uncertainty:", items:["I dunno.","I'm not sure about that.","I'm not entirely certain at this point.","I would need to consult further before providing a definitive answer."], correctOrder:[0,1,2,3] },
+      { id:14, type:'reorder', q:"Arrange from MOST CASUAL to MOST FORMAL — Giving feedback:", items:["That's not great.","I think this could be better.","There are some areas that could benefit from revision.","I would respectfully suggest that certain aspects warrant further refinement."], correctOrder:[0,1,2,3] },
+      { id:15, type:'reorder', q:"Arrange from MOST CASUAL to MOST FORMAL — Closing a presentation:", items:["That's it! Any questions?","Thanks for listening. I'm happy to take questions.","Thank you for your attention. I welcome any questions or comments.","I would like to express my gratitude for your time and attention. I am now at your disposal for questions."], correctOrder:[0,1,2,3] }
+    ]
+  }
+};
+
+// ============================================================
+// UI RENDERING — All async-aware for Firebase
+// ============================================================
+
+// ---- LOGIN ----
+function showLogin(error=''){
+  const modeTag = firebaseReady
+    ? '<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#4ADE80;margin-top:8px"><span class="live-dot"></span>Live sync enabled</span>'
+    : '<span style="font-size:11px;color:#aaa;margin-top:8px;display:block">⚠️ Offline mode (localStorage only)</span>';
+  render(`<div class="page-center fade-in">
+    <div class="card" style="padding:36px 32px;max-width:440px;width:100%"><div class="slide-up">
+      <div class="text-center mb-6">
+        <div style="font-size:42px;margin-bottom:12px">🎓</div>
+        <h1 style="font-size:26px;font-weight:700;margin-bottom:4px">LAEN380 Quiz Portal</h1>
+        <p style="font-size:13px;color:#888">Academic Presentations in English — Mahidol University</p>
+        ${modeTag}
+      </div>
+      ${error?`<div class="alert alert-red mb-4">${error}</div>`:''}
+      <div class="space-y-4">
+        <div><label class="label">Full Name (English)</label><input id="login-name" type="text" placeholder="e.g., Somchai Jaidee" class="input"/></div>
+        <div><label class="label">Mahidol Email</label><input id="login-email" type="email" placeholder="yourID@student.mahidol.edu" class="input"/></div>
+        <button onclick="handleLogin()" class="btn btn-dark lg w-full" style="margin-top:8px">Enter Quiz Portal →</button>
+      </div>
+      <div class="text-center mt-6" style="padding-top:16px;border-top:1px solid #EDEDED">
+        <button onclick="showTeacherLogin()" class="btn btn-ghost">🔐 Teacher Dashboard</button>
+      </div>
+    </div></div>
+  </div>`);
+}
+
+async function handleLogin(){
+  const n=document.getElementById('login-name').value.trim(),e=document.getElementById('login-email').value.trim().toLowerCase();
+  if(!n)return showLogin('Please enter your full name.');
+  if(!e.endsWith('@student.mahidol.edu'))return showLogin('Please use your Mahidol email (xxx@student.mahidol.edu).');
+  showLoading('Signing in...');
+  const ud=await getUserData(e);ud.name=n;await saveUserData(e,ud);setUser({name:n,email:e});showInstructions();
+}
+
+// ---- TEACHER LOGIN ----
+function showTeacherLogin(error=''){
+  render(`<div class="page-center fade-in">
+    <div class="card slide-up" style="padding:36px 32px;max-width:400px;width:100%">
+      <div class="text-center mb-6"><div style="font-size:36px;margin-bottom:8px">📊</div><h2 style="font-size:22px;font-weight:700">Teacher Dashboard</h2></div>
+      ${error?`<div class="alert alert-red mb-4">${error}</div>`:''}
+      <div class="space-y-4">
+        <input id="t-user" type="text" placeholder="Username" class="input"/>
+        <input id="t-pass" type="password" placeholder="Password" class="input"/>
+        <button onclick="handleTeacherLogin()" class="btn btn-dark w-full">Access Dashboard</button>
+        <button onclick="showLogin()" class="btn btn-outline w-full">← Back</button>
+      </div>
+    </div>
+  </div>`);
+}
+function handleTeacherLogin(){
+  const u=document.getElementById('t-user').value.trim(),p=document.getElementById('t-pass').value;
+  if(u===TEACHER_USER&&p===TEACHER_PASS){showLoading('Loading dashboard...');showTeacherDashboard();}
+  else showTeacherLogin('Invalid credentials.');
+}
+
+// ---- INSTRUCTIONS ----
+function showInstructions(){
+  const user=getUser();
+  render(`<div class="page fade-in" style="padding:40px 0"><div class="wrap-md">
+    <div class="card slide-up" style="padding:36px 32px">
+      <h1 style="font-size:26px;font-weight:700;margin-bottom:4px">Welcome, ${user.name} 👋</h1>
+      <p style="font-size:13px;color:#888;margin-bottom:24px">Please read these instructions carefully.</p>
+      <div class="space-y-3">
+        <div class="alert alert-light"><strong>📋 Structure:</strong> 8 parts covering various presentation skills. Complete in <strong>any order</strong>.</div>
+        <div class="alert alert-light"><strong>🔄 Attempts:</strong> 3 attempts per part. <strong>Best score</strong> recorded. Correct answers shown only after <strong>attempt 3</strong>.</div>
+        <div class="alert alert-light"><strong>📊 Scoring:</strong> Best scores contribute to <strong>15% of course grade</strong>. No time limit.</div>
+        <div class="alert alert-light"><strong>💾 Save:</strong> Use "Save for Later" to bookmark progress. Scores save automatically.</div>
+        <div class="alert alert-light"><strong>🎧 Media:</strong> Some questions include <strong>audio clips</strong> (🔊) and <strong>embedded videos</strong>.</div>
+      </div>
+      <button onclick="showDashboard()" class="btn btn-dark lg w-full" style="margin-top:28px">Open Quiz Dashboard →</button>
+    </div>
+  </div></div>`);
+}
+
+// ---- STUDENT DASHBOARD ----
+async function showDashboard(){
+  const user=getUser();if(!user){showLogin();return;}
+  showLoading('Loading your scores...');
+  const data=await getUserData(user.email);
+  let totalBest=0,totalPossible=0;
+  for(let i=1;i<=TOTAL_PARTS;i++){totalBest+=data.parts[i].bestScore;totalPossible+=QUIZ_DATA[i].totalQ;}
+  const overallPct=totalPossible>0?Math.round(totalBest/totalPossible*100):0;
+  let partsHTML='';
+  for(let i=1;i<=TOTAL_PARTS;i++){
+    const p=QUIZ_DATA[i],pd=data.parts[i],pct=p.totalQ>0?Math.round(pd.bestScore/p.totalQ*100):0;
+    const attLeft=MAX_ATTEMPTS-pd.attempts;
+    const badgeCls=pd.attempts===0?'badge-idle':pct>=80?'badge-good':pct>=50?'badge-mid':'badge-low';
+    partsHTML+=`<div class="card slide-in" style="padding:20px;animation-delay:${i*0.04}s">
+      <div class="flex items-start justify-between mb-3">
+        <div class="flex items-center gap-3"><span style="font-size:26px">${p.icon}</span><div>
+          <h3 style="font-size:15px;font-weight:700;color:#111">Part ${i}: ${p.title}</h3>
+          <p style="font-size:12px;color:#aaa;margin-top:2px">${p.totalQ} questions</p></div></div>
+        <span class="badge ${badgeCls}">${pd.attempts===0?'Not started':pct+'%'}</span>
+      </div>
+      <p style="font-size:12px;color:#888;margin-bottom:12px">${p.description}</p>
+      <div class="flex items-center justify-between">
+        <span style="font-size:12px;color:#aaa">Best: <strong style="color:#333">${pd.bestScore}/${p.totalQ}</strong> · Attempts: <strong style="color:#333">${pd.attempts}/${MAX_ATTEMPTS}</strong></span>
+        ${attLeft>0?`<button onclick="startQuiz(${i})" class="btn btn-dark sm">Start →</button>`:`<span style="font-size:12px;color:#aaa">Completed</span>`}
+      </div>
+    </div>`;
+  }
+  render(`<div class="page">
+    <div class="nav"><div class="nav-inner">
+      <div class="flex items-center gap-2"><span style="font-size:18px">🎓</span><strong style="font-family:'Outfit',sans-serif;color:#111">LAEN380</strong></div>
+      <div class="flex items-center gap-3"><span style="font-size:13px;color:#888" class="hide-mobile">${user.name}</span><button onclick="handleLogout()" class="btn btn-outline sm">Logout</button></div>
+    </div></div>
+    <div class="wrap" style="padding-top:28px;padding-bottom:40px">
+      <div class="card fade-in mb-6" style="padding:24px;background:#111;color:#fff;border-color:#111">
+        <div class="flex items-center justify-between" style="flex-wrap:wrap;gap:16px">
+          <div><h2 style="font-size:22px;font-weight:700;color:#fff">Your Progress</h2><p style="font-size:13px;color:#999;margin-top:2px">Overall best score</p></div>
+          <div class="flex items-center gap-4">
+            <div class="text-center"><div style="font-size:36px;font-weight:700;color:#fff">${overallPct}%</div><div style="font-size:12px;color:#999">${totalBest}/${totalPossible} pts</div></div>
+            <div style="width:72px;height:72px"><svg viewBox="0 0 36 36" style="width:100%;height:100%;transform:rotate(-90deg)">
+              <path d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831a15.9155 15.9155 0 0 1 0-31.831" fill="none" stroke="#333" stroke-width="3"/>
+              <path d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831a15.9155 15.9155 0 0 1 0-31.831" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="${overallPct}, 100" class="progress-ring"/>
+            </svg></div>
+          </div>
+        </div>
+      </div>
+      <h3 style="font-size:16px;font-weight:700;color:#111;margin-bottom:14px">Quiz Parts</h3>
+      <div class="grid grid-1 md-grid-2 gap-4">${partsHTML}</div>
+    </div>
+  </div>`);
+}
+
+// ---- QUIZ ENGINE ----
+let currentQuiz={part:0,qIndex:0,answers:{},started:false};
+
+async function startQuiz(partNum){
+  const user=getUser(),data=await getUserData(user.email);
+  if(data.parts[partNum].attempts>=MAX_ATTEMPTS){alert('You have used all 3 attempts for this part.');return;}
+  currentQuiz={part:partNum,qIndex:0,answers:{},started:true};
+  if(data.savedProgress&&data.savedProgress[partNum]){const s=data.savedProgress[partNum];currentQuiz.answers=s.answers||{};currentQuiz.qIndex=s.qIndex||0;}
+  renderQuestion();
+}
+
+async function renderQuestion(){
+  const part=QUIZ_DATA[currentQuiz.part],q=part.questions[currentQuiz.qIndex],total=part.questions.length;
+  const progress=Math.round((currentQuiz.qIndex/total)*100);
+  const user=getUser(),data=await getUserData(user.email),attemptNum=data.parts[currentQuiz.part].attempts+1;
+  let qHTML='';
+  if(currentQuiz.part===6&&part.videos){
+    const vid=part.videos.find(v=>q.id>=v.qRange[0]&&q.id<=v.qRange[1]);
+    if(vid)qHTML+=`<div class="mb-4"><p style="font-size:13px;font-weight:600;color:#888;margin-bottom:8px">📹 ${vid.title}</p><div class="video-wrap"><iframe src="${vid.url}" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div></div>`;
+  }
+  if(q.audio)qHTML+=`<div class="mb-4"><button onclick="speakText(\`${q.audio.replace(/`/g,"'")}\`)" class="audio-btn">🔊 Listen to Clip</button></div>`;
+  qHTML+=`<p style="font-size:15px;font-weight:500;color:#111;line-height:1.7;margin-bottom:18px">${q.q}</p>`;
+  if(q.type==='mcq'){
+    const L=['A','B','C','D'];
+    q.options.forEach((opt,i)=>{const sel=currentQuiz.answers[q.id]===i;
+      qHTML+=`<div onclick="selectAnswer(${q.id},${i})" class="quiz-option ${sel?'selected':''}">
+        <span class="opt-letter">${L[i]}</span><span style="font-size:14px;color:#333;line-height:1.6">${opt}</span></div>`;});
+  } else if(q.type==='reorder'){
+    if(!currentQuiz.answers[q.id])currentQuiz.answers[q.id]=shuffle([...Array(q.items.length).keys()]);
+    const order=currentQuiz.answers[q.id];
+    qHTML+=`<p style="font-size:12px;color:#aaa;margin-bottom:10px">↕️ Drag to reorder (top = first / most casual → bottom = last / most formal)</p>`;
+    order.forEach((idx,pos)=>{
+      qHTML+=`<div draggable="true" ondragstart="dragStart(event,${pos})" ondragover="dragOver(event,${pos})" ondrop="dropItem(event,${pos})" ondragend="dragEnd(event)" class="drag-item">
+        <span class="drag-num">${pos+1}</span><span style="font-size:13px;color:#333">${q.items[idx]}</span></div>`;});
+  }
+  render(`<div class="page">
+    <div class="nav"><div class="nav-inner" style="max-width:760px">
+      <button onclick="saveAndReturn()" class="btn btn-outline sm">← Back</button>
+      <span style="font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:#333">${part.icon} Part ${currentQuiz.part}</span>
+      <span style="font-size:12px;color:#aaa">Attempt ${attemptNum}/3</span>
+    </div></div>
+    <div class="wrap-md" style="padding-top:20px;padding-bottom:40px">
+      <div class="mb-4"><div class="flex justify-between" style="font-size:12px;color:#aaa;margin-bottom:6px"><span>Question ${currentQuiz.qIndex+1} of ${total}</span><span>${progress}%</span></div>
+        <div class="pbar"><div class="pfill" style="width:${progress}%"></div></div></div>
+      <div class="card fade-in" style="padding:28px 24px">${qHTML}</div>
+      <div class="flex justify-between gap-3" style="margin-top:20px">
+        <button onclick="${currentQuiz.qIndex>0?'prevQuestion()':'void(0)'}" class="btn btn-outline" ${currentQuiz.qIndex===0?'style="opacity:.35;cursor:default"':''}>← Prev</button>
+        <button onclick="saveProgress()" class="btn btn-outline sm">💾 Save</button>
+        ${currentQuiz.qIndex<total-1?`<button onclick="nextQuestion()" class="btn btn-dark">Next →</button>`:`<button onclick="submitQuiz()" class="btn btn-success">✓ Submit</button>`}
+      </div>
+    </div>
+  </div>`);
+}
+
+function selectAnswer(qId,optIdx){currentQuiz.answers[qId]=optIdx;renderQuestion();}
+let dragStartPos=null;
+function dragStart(e,pos){dragStartPos=pos;e.target.classList.add('dragging')}
+function dragOver(e,pos){e.preventDefault();e.currentTarget.classList.add('drag-over')}
+function dragEnd(e){document.querySelectorAll('.drag-item').forEach(el=>el.classList.remove('dragging','drag-over'))}
+function dropItem(e,pos){e.preventDefault();const q=QUIZ_DATA[currentQuiz.part].questions[currentQuiz.qIndex],order=currentQuiz.answers[q.id];
+  if(dragStartPos!==null&&dragStartPos!==pos){const item=order.splice(dragStartPos,1)[0];order.splice(pos,0,item);}dragStartPos=null;renderQuestion();}
+function nextQuestion(){if(currentQuiz.qIndex<QUIZ_DATA[currentQuiz.part].questions.length-1){currentQuiz.qIndex++;renderQuestion();window.scrollTo({top:0,behavior:'smooth'})}}
+function prevQuestion(){if(currentQuiz.qIndex>0){currentQuiz.qIndex--;renderQuestion();window.scrollTo({top:0,behavior:'smooth'})}}
+async function saveProgress(){const user=getUser(),data=await getUserData(user.email);if(!data.savedProgress)data.savedProgress={};
+  data.savedProgress[currentQuiz.part]={answers:currentQuiz.answers,qIndex:currentQuiz.qIndex};await saveUserData(user.email,data);alert('Progress saved!');}
+async function saveAndReturn(){await saveProgress();showDashboard();}
+
+async function submitQuiz(){
+  showLoading('Submitting...');
+  const part=QUIZ_DATA[currentQuiz.part],user=getUser(),data=await getUserData(user.email);
+  let score=0;const results=[];
+  part.questions.forEach(q=>{let correct=false;
+    if(q.type==='mcq')correct=currentQuiz.answers[q.id]===q.correct;
+    else if(q.type==='reorder')correct=JSON.stringify(currentQuiz.answers[q.id]||[])===JSON.stringify(q.correctOrder);
+    if(correct)score++;results.push({qId:q.id,correct,userAnswer:currentQuiz.answers[q.id],correctAnswer:q.type==='mcq'?q.correct:q.correctOrder});});
+  data.parts[currentQuiz.part].attempts++;data.parts[currentQuiz.part].scores.push(score);
+  if(score>data.parts[currentQuiz.part].bestScore)data.parts[currentQuiz.part].bestScore=score;
+  if(data.savedProgress)delete data.savedProgress[currentQuiz.part];
+  await saveUserData(user.email,data);
+  const pct=Math.round(score/part.questions.length*100);if(pct>=80)launchConfetti();
+  showResults(currentQuiz.part,results,score,data.parts[currentQuiz.part].attempts);
+}
+
+async function showResults(partNum,results,score,attemptNum){
+  const part=QUIZ_DATA[partNum],pct=Math.round(score/part.questions.length*100),showCorrect=attemptNum>=MAX_ATTEMPTS;
+  const user=getUser(),data=await getUserData(user.email),attLeft=MAX_ATTEMPTS-attemptNum;
+  let emoji=pct>=90?'🌟':pct>=80?'🎉':pct>=60?'💪':pct>=40?'📚':'🔄';
+  let msg=pct>=90?'Outstanding!':pct>=80?'Great job!':pct>=60?'Good effort!':pct>=40?'Keep practicing!':'Review and try again!';
+  let rHTML='';
+  results.forEach((r,i)=>{const q=part.questions[i];
+    if(r.correct){rHTML+=`<div style="padding:10px 14px;border-radius:8px;background:#F0FDF4;border:1px solid #BBF7D0;margin-bottom:8px;font-size:13px"><strong style="color:#166534">✓ Q${i+1}</strong> <span style="color:#166534">Correct</span></div>`;}
+    else{let detail='';
+      if(showCorrect&&q.type==='mcq')detail=`<div style="margin-top:4px;font-size:12px;color:#666">Correct: <strong style="color:#166534">${q.options[q.correct]}</strong></div>`;
+      else if(showCorrect&&q.type==='reorder')detail=`<div style="margin-top:4px;font-size:11px;color:#666">Correct order: ${q.correctOrder.map((idx,pos)=>(pos+1)+'. '+q.items[idx].substring(0,35)+'...').join(' → ')}</div>`;
+      rHTML+=`<div style="padding:10px 14px;border-radius:8px;background:#FEF2F2;border:1px solid #FECACA;margin-bottom:8px;font-size:13px"><strong style="color:#991B1B">✗ Q${i+1}</strong> <span style="color:#991B1B">Incorrect</span>${!showCorrect?'<span style="font-size:11px;color:#aaa;margin-left:6px">(Answer hidden until attempt 3)</span>':''}${detail}</div>`;}
+  });
+  render(`<div class="page fade-in" style="padding:32px 0"><div class="wrap-md">
+    <div class="card text-center slide-up" style="padding:36px 28px;margin-bottom:20px">
+      <div style="font-size:52px;margin-bottom:10px">${emoji}</div>
+      <h2 style="font-size:26px;font-weight:700">${msg}</h2>
+      <p style="font-size:13px;color:#888;margin:6px 0 16px">Part ${partNum}: ${part.title} — Attempt ${attemptNum}</p>
+      <div style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:#F5F5F5;border-radius:999px">
+        <span style="font-size:28px;font-weight:700;color:#111">${score}/${part.questions.length}</span><span style="color:#888">(${pct}%)</span>
+      </div>
+      <p style="font-size:13px;color:#aaa;margin-top:12px">Best: ${data.parts[partNum].bestScore}/${part.questions.length} · ${attLeft>0?attLeft+' attempt(s) left':'All attempts used'}</p>
+    </div>
+    <div class="card" style="padding:24px;margin-bottom:20px">
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:12px">Question Review</h3>
+      ${!showCorrect?'<div class="alert alert-amber mb-4">ℹ️ Correct answers shown after attempt 3.</div>':'<div class="alert alert-green mb-4">✅ All correct answers displayed.</div>'}
+      ${rHTML}
+    </div>
+    <div class="flex gap-3">${attLeft>0?`<button onclick="startQuiz(${partNum})" class="btn btn-dark flex-1">Try Again</button>`:''}<button onclick="showDashboard()" class="btn btn-outline flex-1">← Dashboard</button></div>
+  </div></div>`);
+}
+
+// ---- LOGOUT ----
+async function handleLogout(){
+  const user=getUser();if(!user){showLogin();return;}
+  const data=await getUserData(user.email);let sHTML='',totalBest=0,totalPossible=0;
+  for(let i=1;i<=TOTAL_PARTS;i++){const p=QUIZ_DATA[i],pd=data.parts[i];totalBest+=pd.bestScore;totalPossible+=p.totalQ;
+    const pct=p.totalQ>0?Math.round(pd.bestScore/p.totalQ*100):0;
+    sHTML+=`<div class="flex items-center justify-between" style="padding:10px 0;border-bottom:1px solid #F0F0F0">
+      <span style="font-size:13px;color:#555">${p.icon} Part ${i}: ${p.title}</span>
+      <span style="font-size:13px;font-weight:700;color:${pct>=80?'#166534':pct>=50?'#92400E':'#aaa'}">${pd.bestScore}/${p.totalQ} (${pct}%)</span></div>`;}
+  const overallPct=Math.round(totalBest/totalPossible*100),finalScore=(totalBest/totalPossible*15).toFixed(2);
+  render(`<div class="page-center fade-in">
+    <div class="card slide-up" style="padding:36px 32px;max-width:480px;width:100%">
+      <div class="text-center mb-6"><div style="font-size:42px;margin-bottom:8px">📊</div><h2 style="font-size:22px;font-weight:700">Score Summary</h2><p style="font-size:13px;color:#888">${user.name} — ${user.email}</p></div>
+      <div class="text-center" style="padding:16px;background:#111;border-radius:10px;margin-bottom:20px;color:#fff">
+        <div style="font-size:36px;font-weight:700">${overallPct}%</div>
+        <div style="font-size:13px;color:#999">${totalBest}/${totalPossible} total points</div>
+        <div style="font-size:14px;font-weight:600;color:#4ADE80;margin-top:4px">Grade: ${finalScore} / 15%</div>
+      </div>
+      <div class="mb-6">${sHTML}</div>
+      <button onclick="confirmLogout()" class="btn btn-dark w-full">Confirm Logout</button>
+      <button onclick="showDashboard()" class="btn btn-outline w-full" style="margin-top:8px">← Return</button>
+    </div>
+  </div>`);
+}
+function confirmLogout(){sessionStorage.removeItem('laen380_user');showLogin()}
+
+
+// ============================================================
+// TEACHER DASHBOARD — Live Sync + Override + Reset
+// ============================================================
+let teacherUnsub = null; // Firestore real-time listener
+
+async function showTeacherDashboard(){
+  showLoading('Loading student data...');
+  const studentList = await getAllStudents();
+  renderTeacherTable(studentList);
+
+  // Start real-time listener if Firebase is active
+  if(firebaseReady && !teacherUnsub){
+    teacherUnsub = db.collection('students').onSnapshot(snap=>{
+      const live = snap.docs.map(d=>d.data());
+      renderTeacherTable(live);
+    });
+  }
+}
+
+function renderTeacherTable(studentList){
+  let tableHTML='';
+  studentList.forEach(s=>{
+    if(!s.parts) return;
+    let tB=0,tP=0;
+    for(let i=1;i<=TOTAL_PARTS;i++){tB+=(s.parts[i]?s.parts[i].bestScore:0);tP+=QUIZ_DATA[i].totalQ;}
+    const pct=tP>0?Math.round(tB/tP*100):0,fs=tP>0?(tB/tP*15).toFixed(2):'0.00';
+    let ps='';for(let i=1;i<=TOTAL_PARTS;i++){const pd=s.parts[i]||{bestScore:0,attempts:0};
+      ps+=`<td class="text-center" style="font-size:12px;padding:8px 4px">
+        <div style="font-weight:600;color:#111">${pd.bestScore}/${QUIZ_DATA[i].totalQ}</div>
+        <div style="font-size:10px;color:#aaa">${pd.attempts} att</div></td>`;}
+    const safeEmail = s.email.replace(/'/g,"\\'");
+    tableHTML+=`<tr>
+      <td style="font-weight:500;color:#111;white-space:nowrap">${s.name||'—'}</td>
+      <td style="font-size:12px;color:#888">${s.email}</td>
+      ${ps}
+      <td class="text-center" style="font-weight:700;color:${pct>=80?'#166534':pct>=50?'#111':'#DC2626'}">${pct}%</td>
+      <td class="text-center" style="font-weight:700;color:#111">${fs}</td>
+      <td class="text-center"><button onclick="openStudentModal('${safeEmail}')" class="btn btn-outline sm" style="font-size:11px;padding:4px 10px">✏️ Edit</button></td>
+    </tr>`;
+  });
+  let pH='';for(let i=1;i<=TOTAL_PARTS;i++)pH+=`<th class="text-center" style="padding:8px 4px;font-size:10px">P${i}</th>`;
+  const activeCount=studentList.filter(s=>{if(!s.parts)return false;let t=0;for(let i=1;i<=TOTAL_PARTS;i++)t+=(s.parts[i]?s.parts[i].attempts:0);return t>0;}).length;
+  const avgPct=studentList.length>0?Math.round(studentList.reduce((a,s)=>{if(!s.parts)return a;let t=0,p=0;for(let i=1;i<=TOTAL_PARTS;i++){t+=(s.parts[i]?s.parts[i].bestScore:0);p+=QUIZ_DATA[i].totalQ;}return a+(p>0?t/p*100:0);},0)/studentList.length)+'%':'—';
+  const liveTag = firebaseReady ? '<span class="live-dot"></span>Live' : 'Local only';
+
+  render(`<div class="page">
+    <div class="nav"><div class="nav-inner" style="max-width:1200px">
+      <div class="flex items-center gap-2"><span style="font-size:18px">📊</span><strong style="font-family:'Outfit',sans-serif;color:#111">Teacher Dashboard</strong>
+        <span style="font-size:11px;color:#4ADE80;display:inline-flex;align-items:center;gap:2px;margin-left:8px">${liveTag}</span></div>
+      <div class="flex gap-2">
+        <button onclick="exportCSV()" class="btn btn-outline sm">📥 CSV</button>
+        <button onclick="teacherLogout()" class="btn btn-outline sm">Logout</button>
+      </div>
+    </div></div>
+    <div class="wrap-lg" style="padding-top:24px;padding-bottom:40px">
+      <div class="grid grid-1 md-grid-3 gap-4 mb-6">
+        <div class="card text-center" style="padding:20px"><div style="font-size:32px;font-weight:700;color:#111">${studentList.length}</div><div style="font-size:13px;color:#888">Total Students</div></div>
+        <div class="card text-center" style="padding:20px"><div style="font-size:32px;font-weight:700;color:#111">${activeCount}</div><div style="font-size:13px;color:#888">Active Students</div></div>
+        <div class="card text-center" style="padding:20px"><div style="font-size:32px;font-weight:700;color:#111">${avgPct}</div><div style="font-size:13px;color:#888">Average Score</div></div>
+      </div>
+      <div class="card overflow-x-auto">
+        <table><thead><tr><th>Name</th><th>Email</th>${pH}<th class="text-center">Overall</th><th class="text-center">Grade/15</th><th class="text-center">Actions</th></tr></thead>
+        <tbody>${tableHTML||'<tr><td colspan="13" class="text-center" style="padding:40px;color:#aaa">No student data yet.</td></tr>'}</tbody></table>
+      </div>
+    </div>
+    <div id="modal-root"></div>
+  </div>`);
+}
+
+function teacherLogout(){
+  if(teacherUnsub){teacherUnsub();teacherUnsub=null;}
+  showLogin();
+}
+
+async function openStudentModal(email){
+  const data=await getUserData(email);
+  let partsHTML='';
+  for(let i=1;i<=TOTAL_PARTS;i++){
+    const pd=data.parts[i],p=QUIZ_DATA[i];
+    partsHTML+=`
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #F0F0F0;flex-wrap:wrap;gap:8px">
+        <div style="flex:1;min-width:140px">
+          <span style="font-size:13px;font-weight:600;color:#111">${p.icon} P${i}: ${p.title}</span>
+          <div style="font-size:11px;color:#aaa;margin-top:2px">Attempts: ${pd.attempts}/${MAX_ATTEMPTS} · Best: ${pd.bestScore}/${p.totalQ}</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <label style="font-size:11px;color:#888">Score:</label>
+          <input id="score-p${i}" type="number" min="0" max="${p.totalQ}" value="${pd.bestScore}" style="width:52px;padding:4px 6px;border:1.5px solid #D4D4D4;border-radius:6px;font-size:13px;text-align:center"/>
+          <span style="font-size:11px;color:#aaa">/${p.totalQ}</span>
+          <label style="font-size:11px;color:#888;margin-left:4px">Att:</label>
+          <input id="att-p${i}" type="number" min="0" max="3" value="${pd.attempts}" style="width:42px;padding:4px 6px;border:1.5px solid #D4D4D4;border-radius:6px;font-size:13px;text-align:center"/>
+          <button onclick="resetOnePart('${email}',${i})" class="btn btn-danger" title="Reset to 0/0">↺</button>
+        </div>
+      </div>`;
+  }
+  const safeEmail = email.replace(/'/g,"\\'");
+  const modalHTML=`<div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal slide-up">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px">
+        <div><h3 style="font-size:18px;font-weight:700">${data.name||'Student'}</h3><p style="font-size:12px;color:#888">${email}</p></div>
+        <button onclick="closeModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#aaa;padding:0">✕</button>
+      </div>
+      <div style="font-size:12px;color:#666;padding:12px;background:#F5F5F5;border-radius:8px;margin-bottom:16px;line-height:1.7">
+        <strong>Override scores:</strong> Edit the score number directly.<br>
+        <strong>Edit attempts:</strong> Change attempt count (set to 0 to allow retakes).<br>
+        <strong>↺ Reset:</strong> Resets that part to 0 score and 0 attempts.<br>
+        <strong>Save:</strong> Click "Save All Changes" to apply to the live database.
+      </div>
+      <div>${partsHTML}</div>
+      <div style="display:flex;gap:8px;margin-top:20px">
+        <button onclick="saveStudentOverrides('${safeEmail}')" class="btn btn-dark flex-1">Save All Changes</button>
+        <button onclick="closeModal()" class="btn btn-outline flex-1">Cancel</button>
+      </div>
+    </div>
+  </div>`;
+  document.getElementById('modal-root').innerHTML = modalHTML;
+}
+
+function closeModal(){const mr=document.getElementById('modal-root');if(mr)mr.innerHTML='';}
+
+async function resetOnePart(email,partNum){
+  document.getElementById('score-p'+partNum).value = 0;
+  document.getElementById('att-p'+partNum).value = 0;
+}
+
+async function saveStudentOverrides(email){
+  const data=await getUserData(email);
+  for(let i=1;i<=TOTAL_PARTS;i++){
+    const sInp=document.getElementById('score-p'+i);
+    const aInp=document.getElementById('att-p'+i);
+    if(sInp) data.parts[i].bestScore = Math.max(0,Math.min(parseInt(sInp.value)||0,QUIZ_DATA[i].totalQ));
+    if(aInp) data.parts[i].attempts = Math.max(0,Math.min(parseInt(aInp.value)||0,MAX_ATTEMPTS));
+  }
+  await saveUserData(email,data);
+  closeModal();
+  // If not using live listener, refresh manually
+  if(!teacherUnsub) showTeacherDashboard();
+}
+
+async function exportCSV(){
+  const studentList = await getAllStudents();
+  let csv='Name,Email';for(let i=1;i<=TOTAL_PARTS;i++)csv+=`,Part${i}_Best,Part${i}_Attempts`;csv+=',Total,Possible,Pct,Grade15\n';
+  studentList.forEach(s=>{
+    if(!s.parts)return;
+    let row=`"${s.name||''}","${s.email||''}"`,tB=0,tP=0;
+    for(let i=1;i<=TOTAL_PARTS;i++){const pd=s.parts[i]||{bestScore:0,attempts:0};row+=`,${pd.bestScore},${pd.attempts}`;tB+=pd.bestScore;tP+=QUIZ_DATA[i].totalQ;}
+    row+=`,${tB},${tP},${tP>0?(tB/tP*100).toFixed(1):0},${tP>0?(tB/tP*15).toFixed(2):'0.00'}`;csv+=row+'\n';});
+  const blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='LAEN380_Quiz_Scores.csv';a.click();URL.revokeObjectURL(url);
+}
+
+// ---- INIT ----
+window.addEventListener('DOMContentLoaded',()=>{
+  if(window.speechSynthesis) window.speechSynthesis.getVoices();
+  const u=getUser();
+  if(u) showDashboard();
+  else showLogin();
+});
+</script>
+</body>
+</html>
