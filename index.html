@@ -12,7 +12,7 @@
 
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',system-ui,sans-serif;background:#FAFAFA;color:#1a1a1a;line-height:1.6;min-height:100vh}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#FAFAFA;color:#1a1a1a;line-height:1.65;min-height:100vh;font-size:16px}
 h1,h2,h3,h4,h5,h6{font-family:'Outfit',sans-serif;line-height:1.3;color:#111}
 input,button{font-family:inherit;font-size:inherit}
 .fade-in{animation:fadeIn .5s ease-out}.slide-up{animation:slideUp .5s ease-out}.slide-in{animation:slideIn .4s ease-out}
@@ -21,62 +21,76 @@ input,button{font-family:inherit;font-size:inherit}
 @keyframes slideIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:translateX(0)}}
 @keyframes confetti{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
 @keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .confetti-piece{position:fixed;top:-10px;animation:confetti 3s ease-out forwards;pointer-events:none;z-index:9999}
-.page{min-height:100vh;background:#FAFAFA}
-.page-center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#F5F5F5}
-.wrap{max-width:960px;margin:0 auto;padding:24px 32px}
-.wrap-sm{max-width:560px;margin:0 auto;padding:24px 32px}
-.wrap-md{max-width:760px;margin:0 auto;padding:24px 32px}
-.wrap-lg{max-width:1200px;margin:0 auto;padding:24px 32px}
+.page{min-height:100vh;background:#FAFAFA url("bg.png") center/cover fixed}
+.page-center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#F5F5F5 url("bg.png") center/cover fixed}
+.wrap{max-width:960px;margin:0 auto;padding:24px 40px}
+.wrap-sm{max-width:560px;margin:0 auto;padding:24px 40px}
+.wrap-md{max-width:780px;margin:0 auto;padding:24px 40px}
+.wrap-lg{max-width:1240px;margin:0 auto;padding:24px 40px}
 .card{background:#fff;border-radius:12px;border:1px solid #E5E5E5;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.btn{display:inline-flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:600;border-radius:10px;transition:all .25s;cursor:pointer;border:none;font-size:14px}
-.btn-dark{background:#111;color:#fff;padding:12px 28px}.btn-dark:hover{background:#333;box-shadow:0 6px 20px rgba(0,0,0,.15)}
-.btn-dark.lg{padding:14px 32px;font-size:16px}
-.btn-dark.sm{padding:7px 16px;font-size:12px;font-weight:500}
-.btn-outline{background:#fff;color:#333;padding:10px 24px;border:1.5px solid #D4D4D4}.btn-outline:hover{border-color:#111;color:#111}
-.btn-outline.sm{padding:6px 14px;font-size:12px;font-weight:500}
-.btn-success{background:#111;color:#4ADE80;padding:12px 28px}.btn-success:hover{background:#222}
-.btn-danger{background:#fff;color:#DC2626;padding:7px 14px;border:1.5px solid #FECACA;font-size:12px;font-weight:500}.btn-danger:hover{background:#FEF2F2;border-color:#DC2626}
-.btn-ghost{background:transparent;color:#888;padding:6px 12px;font-size:13px;font-weight:500;border:none}.btn-ghost:hover{color:#111}
+.btn{display:inline-flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:600;border-radius:10px;transition:all .25s;cursor:pointer;border:none;font-size:16px}
+.btn-dark{background:#111;color:#fff;padding:13px 30px}.btn-dark:hover{background:#333;box-shadow:0 6px 20px rgba(0,0,0,.15)}
+.btn-dark.lg{padding:15px 34px;font-size:18px}.btn-dark.sm{padding:8px 18px;font-size:14px;font-weight:500}
+.btn-outline{background:#fff;color:#333;padding:11px 26px;border:1.5px solid #D4D4D4;font-size:15px}.btn-outline:hover{border-color:#111;color:#111}
+.btn-outline.sm{padding:7px 16px;font-size:13px;font-weight:500}
+.btn-success{background:#111;color:#4ADE80;padding:13px 30px;font-size:16px}.btn-success:hover{background:#222}
+.btn-danger{background:#fff;color:#DC2626;padding:7px 14px;border:1.5px solid #FECACA;font-size:13px;font-weight:500}.btn-danger:hover{background:#FEF2F2;border-color:#DC2626}
+.btn-ghost{background:transparent;color:#888;padding:6px 12px;font-size:14px;font-weight:500;border:none}.btn-ghost:hover{color:#111}
 .w-full{width:100%}
-.input{width:100%;padding:12px 16px;border-radius:10px;border:1.5px solid #D4D4D4;outline:none;transition:border-color .2s;font-size:15px;color:#111;background:#fff}
+.input{width:100%;padding:13px 18px;border-radius:10px;border:1.5px solid #D4D4D4;outline:none;transition:border-color .2s;font-size:17px;color:#111;background:#fff}
 .input:focus{border-color:#111}.input::placeholder{color:#aaa}
-.label{display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
-.quiz-option{padding:14px 16px;border-radius:10px;border:1.5px solid #E5E5E5;background:#fff;cursor:pointer;transition:all .2s;display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
+.label{display:block;font-size:14px;font-weight:600;color:#555;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.quiz-option{padding:16px 18px;border-radius:10px;border:1.5px solid #E5E5E5;background:#fff;cursor:pointer;transition:all .2s;display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
 .quiz-option:hover{border-color:#999;box-shadow:0 2px 8px rgba(0,0,0,.05)}
 .quiz-option.selected{border-color:#111;background:#F5F5F5}
-.opt-letter{flex-shrink:0;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:#F0F0F0;color:#666;transition:all .2s}
+.opt-letter{flex-shrink:0;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;background:#F0F0F0;color:#666;transition:all .2s}
 .quiz-option.selected .opt-letter{background:#111;color:#fff}
-.drag-item{padding:12px 14px;border-radius:10px;border:1.5px solid #E5E5E5;background:#fff;cursor:grab;transition:all .2s;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.drag-item{padding:14px 16px;border-radius:10px;border:1.5px solid #E5E5E5;background:#fff;cursor:grab;transition:all .2s;display:flex;align-items:center;gap:14px;margin-bottom:8px}
 .drag-item:active{cursor:grabbing}.drag-item.dragging{opacity:.4}.drag-item.drag-over{border-color:#111;background:#F5F5F5}
-.drag-num{flex-shrink:0;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:#F0F0F0;color:#666}
-.audio-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;background:#F0F0F0;color:#333;font-weight:500;cursor:pointer;border:1px solid #D4D4D4;transition:all .2s;font-size:14px}
-.audio-btn:hover{background:#E5E5E5}
-.pbar{width:100%;height:6px;background:#E5E5E5;border-radius:999px;overflow:hidden}
-.pfill{height:100%;background:#111;border-radius:999px;transition:width .5s}
+.drag-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;background:#F0F0F0;color:#666}
+.audio-player{background:#F5F5F5;border:1px solid #E5E5E5;border-radius:10px;padding:14px 18px;margin-bottom:16px}
+.audio-controls{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.audio-controls button{background:#111;color:#fff;border:none;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:background .2s}
+.audio-controls button:hover{background:#333}
+.audio-controls button.stop-btn{background:#666}.audio-controls button.stop-btn:hover{background:#444}
+.audio-progress{flex:1;height:6px;background:#D4D4D4;border-radius:999px;overflow:hidden}
+.audio-progress-fill{height:100%;background:#22C55E;border-radius:999px;transition:width .3s}
+.audio-time{font-size:14px;color:#888;min-width:50px;text-align:right;font-variant-numeric:tabular-nums}
+.transcript-toggle{font-size:14px;color:#666;cursor:pointer;background:none;border:none;font-weight:500;padding:4px 0;display:inline-flex;align-items:center;gap:4px}
+.transcript-toggle:hover{color:#111}
+.transcript-box{margin-top:8px;padding:14px 16px;background:#fff;border:1px solid #E5E5E5;border-radius:8px;font-size:16px;line-height:1.7;color:#444;max-height:220px;overflow-y:auto}
+.pbar{width:100%;height:8px;background:#E5E5E5;border-radius:999px;overflow:hidden}
+.pfill{height:100%;background:#22C55E;border-radius:999px;transition:width .5s}
 .progress-ring{transition:stroke-dashoffset .5s ease}
 .nav{background:rgba(255,255,255,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid #E5E5E5;position:sticky;top:0;z-index:50}
-.nav-inner{max-width:960px;margin:0 auto;padding:10px 32px;display:flex;align-items:center;justify-content:space-between}
+.nav-inner{max-width:960px;margin:0 auto;padding:10px 40px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:8px}
+.nav-logo-text{font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;color:#111;line-height:1.2}
+.nav-logo-sub{font-size:11px;font-weight:400;color:#888;display:block}
 .video-wrap{aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#000}.video-wrap iframe{width:100%;height:100%;border:none}
 table{width:100%;border-collapse:collapse;text-align:left}
-th{padding:10px 14px;font-size:11px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:.5px;background:#FAFAFA;border-bottom:1px solid #E5E5E5}
-td{padding:10px 14px;font-size:13px;color:#333}tr:hover td{background:#FAFAFA}tbody tr{border-top:1px solid #F0F0F0}
-.alert{padding:14px 18px;border-radius:10px;font-size:13px;line-height:1.6}
+th{padding:10px 14px;font-size:14px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:.5px;background:#FAFAFA;border-bottom:1px solid #E5E5E5}
+td{padding:10px 14px;font-size:14px;color:#333}tr:hover td{background:#FAFAFA}tbody tr{border-top:1px solid #F0F0F0}
+.alert{padding:14px 18px;border-radius:10px;font-size:16px;line-height:1.6}
 .alert-light{background:#F5F5F5;border:1px solid #E5E5E5;color:#333}
 .alert-green{background:#F0FDF4;border:1px solid #BBF7D0;color:#166534}
 .alert-red{background:#FEF2F2;border:1px solid #FECACA;color:#991B1B}
 .alert-amber{background:#FFFBEB;border:1px solid #FDE68A;color:#92400E}
-.badge{display:inline-flex;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600}
-.badge-idle{background:#F0F0F0;color:#999}
-.badge-good{background:#111;color:#4ADE80}
+.badge{display:inline-flex;padding:4px 11px;border-radius:999px;font-size:13px;font-weight:600}
+.badge-idle{background:#F0F0F0;color:#999}.badge-good{background:#111;color:#4ADE80}
 .badge-mid{background:#F5F5F5;color:#111;border:1px solid #D4D4D4}
 .badge-low{background:#F5F5F5;color:#DC2626;border:1px solid #FECACA}
 .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
 .modal{background:#fff;border-radius:14px;padding:28px;max-width:520px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto}
-.spinner{width:24px;height:24px;border:3px solid #E5E5E5;border-top-color:#111;border-radius:50%;animation:spin .6s linear infinite;margin:0 auto}
-.loading-page{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#888;font-size:14px}
+.spinner{width:28px;height:28px;border:3px solid #E5E5E5;border-top-color:#111;border-radius:50%;animation:spin .6s linear infinite;margin:0 auto}
+.loading-page{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#888;font-size:16px}
 .live-dot{width:8px;height:8px;border-radius:50%;background:#4ADE80;display:inline-block;margin-right:6px;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.site-footer{background:#111;color:#999;padding:28px 40px;text-align:center;font-size:14px;line-height:1.8}
+.site-footer a{color:#ccc;text-decoration:underline}.site-footer a:hover{color:#fff}
+.cc-badges{display:inline-flex;align-items:center;gap:6px;margin-top:6px}
+.cc-badges img{height:22px;opacity:.85}
 .flex{display:flex}.flex-col{flex-direction:column}.items-center{align-items:center}.items-start{align-items:start}
 .justify-between{justify-content:space-between}.justify-center{justify-content:center}
 .gap-2{gap:8px}.gap-3{gap:12px}.gap-4{gap:16px}.flex-1{flex:1}
@@ -88,7 +102,7 @@ td{padding:10px 14px;font-size:13px;color:#333}tr:hover td{background:#FAFAFA}tb
 .overflow-x-auto{overflow-x:auto}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#FAFAFA}::-webkit-scrollbar-thumb{background:#D4D4D4;border-radius:3px}
 @media(min-width:768px){.md-grid-2{grid-template-columns:repeat(2,1fr)}.md-grid-3{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:767px){.hide-mobile{display:none}.wrap,.wrap-md,.wrap-lg{padding:16px}}
+@media(max-width:767px){.hide-mobile{display:none}.wrap,.wrap-md,.wrap-lg,.wrap-sm{padding:16px 18px}.nav-inner{padding:10px 18px}.site-footer{padding:24px 18px}}
 </style>
 </head>
 <body>
@@ -199,6 +213,30 @@ function speakText(text){
   const v=window.speechSynthesis.getVoices(),e=v.find(x=>x.lang.startsWith('en'));
   if(e)u.voice=e;window.speechSynthesis.speak(u);}
 }
+// ---- AUDIO PLAYER ----
+let audioState={playing:false,utterance:null,timer:null,startTime:0,elapsed:0,duration:0};
+function playAudio(text){
+  stopAudio();if(!('speechSynthesis' in window))return;
+  const u=new SpeechSynthesisUtterance(text);u.rate=0.9;u.pitch=1;u.lang='en-US';
+  const v=window.speechSynthesis.getVoices(),eng=v.find(x=>x.lang.startsWith('en'));
+  if(eng)u.voice=eng;
+  const words=text.split(/\s+/).length,estDur=Math.round(words/2.25);
+  audioState={playing:true,utterance:u,timer:null,startTime:Date.now(),elapsed:0,duration:estDur};
+  u.onend=()=>{audioState.playing=false;updAudioUI(100,estDur,estDur);clearInterval(audioState.timer);};
+  audioState.timer=setInterval(()=>{if(!audioState.playing)return clearInterval(audioState.timer);
+    audioState.elapsed=Math.round((Date.now()-audioState.startTime)/1000);
+    updAudioUI(Math.min(100,Math.round(audioState.elapsed/estDur*100)),audioState.elapsed,estDur);},250);
+  window.speechSynthesis.speak(u);
+}
+function pauseAudio(){if(window.speechSynthesis.speaking){window.speechSynthesis.pause();audioState.playing=false;clearInterval(audioState.timer);const b=document.getElementById('a-play');if(b)b.textContent='▶';}}
+function resumeAudio(){if(window.speechSynthesis.paused){window.speechSynthesis.resume();audioState.playing=true;audioState.startTime=Date.now()-audioState.elapsed*1000;audioState.timer=setInterval(()=>{audioState.elapsed=Math.round((Date.now()-audioState.startTime)/1000);updAudioUI(Math.min(100,Math.round(audioState.elapsed/audioState.duration*100)),audioState.elapsed,audioState.duration);},250);const b=document.getElementById('a-play');if(b)b.textContent='⏸';}}
+function toggleAudio(text){if(window.speechSynthesis.paused)resumeAudio();else if(audioState.playing)pauseAudio();else playAudio(text);}
+function stopAudio(){window.speechSynthesis.cancel();audioState.playing=false;clearInterval(audioState.timer);updAudioUI(0,0,0);}
+function updAudioUI(pct,el,tot){const f=document.getElementById('a-fill');if(f)f.style.width=pct+'%';const t=document.getElementById('a-time');if(t)t.textContent=fmt(el)+'/'+fmt(tot);const b=document.getElementById('a-play');if(b)b.textContent=audioState.playing?'⏸':'▶';}
+function fmt(s){return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;}
+function toggleTranscript(){const t=document.getElementById('transcript');if(t)t.style.display=t.style.display==='none'?'block':'none';}
+function audioHTML(text){const safe=text.replace(/`/g,"'").replace(/\\/g,"\\\\");return `<div class="audio-player"><div class="audio-controls"><button id="a-play" onclick="toggleAudio(\`${safe}\`)">▶</button><button class="stop-btn" onclick="stopAudio()">⏹</button><div class="audio-progress"><div class="audio-progress-fill" id="a-fill" style="width:0%"></div></div><span class="audio-time" id="a-time">0:00/0:00</span></div><button class="transcript-toggle" onclick="toggleTranscript()">📄 Show / Hide Transcript ▾</button><div class="transcript-box" id="transcript" style="display:none">${text}</div></div>`;}
+
 function launchConfetti(){
   const c=['#111','#666','#999','#DDD','#4ADE80','#888'];
   for(let i=0;i<35;i++){const el=document.createElement('div');el.className='confetti-piece';
@@ -208,10 +246,14 @@ function launchConfetti(){
   el.style.animationDuration=(Math.random()*2+2)+'s';document.body.appendChild(el);
   setTimeout(()=>el.remove(),5000);}
 }
+const FOOTER_HTML=`<footer class="site-footer"><div>Designed, curated, and created by <strong>Dr. Payungsak Kaenchan, EdD</strong> | Faculty of Liberal Arts, Mahidol University</div><div class="cc-badges"><img src="https://licensebuttons.net/l/by-nc/4.0/88x31.png" alt="CC BY-NC 4.0"/></div><div style="margin-top:4px;font-size:13px">Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</a>. Attributions must be cited. No commercial use.</div></footer>`;
+const NAV_LOGO_HTML=`<div class="nav-logo"><span style="font-size:20px">🎓</span><div class="nav-logo-text">LAEN380<span class="nav-logo-sub">Academic Presentations in English</span></div></div>`;
+
 function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
 
 const app=document.getElementById('app');
 function render(h){app.innerHTML=h}
+function renderPage(h){app.innerHTML=h+FOOTER_HTML}
 function showLoading(msg='Loading...'){render(`<div class="loading-page fade-in"><div class="spinner"></div><p>${msg}</p></div>`)}
 
 
@@ -221,11 +263,11 @@ const QUIZ_DATA = {
     icon: "🏗️",
     color: "brand",
     description: "Identify the organizational pattern used in short presentation excerpts.",
-    totalQ: 15,
+    totalQ: 17,
     questions: [
-      { id:1, type:'mcq', audio:"Today, I want to walk you through the evolution of artificial intelligence. It all began in 1956 at the Dartmouth Conference, where the term was first coined. By the 1980s, expert systems emerged. In the 2000s, machine learning took center stage. And now, in the 2020s, generative AI is transforming every industry.", q:"What organizational pattern does this presentation use?", options:["Chronological","Spatial","Cause-Effect","Topical"], correct:0 },
-      { id:2, type:'mcq', audio:"Imagine walking into the new campus library. On your left, you'll find the collaborative learning zones with modular furniture. Straight ahead is the three-story atrium housing the digital media center. On the upper floors, you'll discover quiet study pods, and the rooftop features an open-air reading garden.", q:"What organizational pattern does this presentation use?", options:["Spatial","Chronological","Problem-Solution","Compare and Contrast"], correct:0 },
-      { id:3, type:'mcq', audio:"Our university faces a serious problem: student mental health issues have increased by 40% since 2020. Counseling centers are overwhelmed, wait times exceed three weeks, and many students simply give up seeking help. I propose three solutions: expanding telehealth counseling, training peer support ambassadors, and integrating wellness modules into every course.", q:"What organizational pattern does this presentation use?", options:["Cause-Effect","Problem-Solution","Argumentative","Monroe's Motivated Sequence"], correct:1 },
+      { id:1, type:'mcq', audio:"Today, I want to walk you through the remarkable evolution of artificial intelligence and how it has shaped our modern world. It all began in 1956 at the Dartmouth Conference, where researchers first coined the term artificial intelligence. By the 1980s, expert systems emerged as the first practical applications in industry. In the 2000s, machine learning gained significant traction, transforming data analysis. And now, in the 2020s, generative AI and large language models are revolutionizing virtually every sector of the global economy.", q:"What organizational pattern does this presentation use?", options:["Chronological","Spatial","Cause-Effect","Topical"], correct:0 },
+      { id:2, type:'mcq', audio:"Imagine walking into the newly renovated campus library at our university. As you enter through the main doors, on your immediate left you will find the collaborative learning zones featuring modular furniture and interactive whiteboards. Straight ahead lies the impressive three-story glass atrium that houses the state-of-the-art digital media center. If you take the elevator to the upper floors, you will discover individual quiet study pods designed for focused concentration. Finally, the rooftop level features a beautifully landscaped open-air reading garden with panoramic campus views.", q:"What organizational pattern does this presentation use?", options:["Spatial","Chronological","Problem-Solution","Compare and Contrast"], correct:0 },
+      { id:3, type:'mcq', audio:"Our university is facing a critical challenge that demands immediate attention. Student mental health issues have surged by approximately forty percent since 2020, according to the latest institutional research data. University counseling centers are overwhelmed with unprecedented demand, and wait times now frequently exceed three weeks for an initial appointment. Many students have simply given up seeking professional help altogether. To address this growing crisis, I propose three targeted solutions: first, expanding telehealth counseling services; second, training peer support ambassadors across all faculties; and third, integrating mandatory wellness modules into every academic course.", q:"What organizational pattern does this presentation use?", options:["Cause-Effect","Problem-Solution","Argumentative","Monroe's Motivated Sequence"], correct:1 },
       { id:4, type:'mcq', audio:"Social media addiction among teenagers leads to several consequences. First, excessive screen time causes disrupted sleep patterns. Second, constant comparison with curated online profiles results in lower self-esteem. Third, reduced face-to-face interaction weakens interpersonal skills. These combined effects contribute to rising anxiety and depression rates.", q:"What organizational pattern does this presentation use?", options:["Problem-Solution","Topical","Cause-Effect","Sequential"], correct:2 },
       { id:5, type:'mcq', audio:"Let me compare two popular renewable energy sources. Solar panels are cheaper to install and maintain, work silently, but depend on sunlight availability. Wind turbines generate power day and night, occupy less ground space, but produce noise and require higher initial investment. Both contribute significantly to reducing carbon emissions.", q:"What organizational pattern does this presentation use?", options:["Topical","Compare and Contrast","Cause-Effect","Definition"], correct:1 },
       { id:6, type:'mcq', audio:"Do you know that every eight seconds, a student drops out of high school in the United States? That is a crisis. These young people face limited career prospects and lower lifetime earnings. We need to act. Schools should implement early-warning systems to identify at-risk students. Imagine a future where every student graduates prepared for success. Start by supporting your local mentoring program today.", q:"What organizational pattern does this presentation use?", options:["Problem-Solution","Chronological","Monroe's Motivated Sequence","Argumentative"], correct:2 },
@@ -274,7 +316,7 @@ const QUIZ_DATA = {
     icon: "🎭",
     color: "sage",
     description: "Analyze critical presentation problems and select the best solutions.",
-    totalQ: 15,
+    totalQ: 17,
     questions: [
       { id:1, type:'mcq', q:"During a presentation, the projector suddenly stops working. What is the BEST immediate response?", options:["Cancel the presentation and reschedule","Continue presenting using verbal descriptions and handouts while asking a colleague to troubleshoot","Spend 15 minutes trying to fix the projector while the audience waits","Ask the audience to view slides on your laptop screen"], correct:1 },
       { id:2, type:'mcq', q:"You arrive at the venue and discover the room is set in theater style, but your presentation requires group activities. What should you do?", options:["Skip the group activities entirely","Ask participants to rearrange chairs into small circles before you begin","Proceed with theater style and modify activities to work with pairs instead","Complain to the organizer and wait for them to fix it"], correct:1 },
@@ -430,7 +472,7 @@ const QUIZ_DATA = {
     icon: "📖",
     color: "sage",
     description: "Apply storytelling frameworks for persuasion in presentations.",
-    totalQ: 15,
+    totalQ: 17,
     questions: [
       { id:1, type:'mcq', q:"According to the science of storytelling, stories activate the 'whole brain' and have approximately what retention rate compared to facts alone?", options:["Facts: 5%, Stories: 65%","Facts: 30%, Stories: 50%","Facts: 20%, Stories: 40%","Facts: 10%, Stories: 35%"], correct:0 },
       { id:2, type:'mcq', q:"Monroe's Motivated Sequence follows which order?", options:["Need → Attention → Action → Satisfaction → Visualization","Attention → Need → Satisfaction → Visualization → Action","Visualization → Need → Attention → Satisfaction → Action","Attention → Satisfaction → Need → Action → Visualization"], correct:1 },
@@ -454,7 +496,7 @@ const QUIZ_DATA = {
     icon: "📊",
     color: "sky",
     description: "Arrange expressions from very casual to very polite/formal.",
-    totalQ: 15,
+    totalQ: 18,
     questions: [
       { id:1, type:'reorder', q:"Arrange from MOST CASUAL to MOST FORMAL — Greeting someone:", items:["Hey!","Hi there.","Hello.","Good morning.","Greetings, it is a pleasure to meet you."], correctOrder:[0,1,2,3,4] },
       { id:2, type:'reorder', q:"Arrange from MOST CASUAL to MOST FORMAL — Asking for help:", items:["Can you help me out?","Could you help me with this?","Would you mind assisting me?","I would be grateful if you could provide your assistance."], correctOrder:[0,1,2,3] },
@@ -489,7 +531,7 @@ function showLogin(error=''){
       <div class="text-center mb-6">
         <div style="font-size:42px;margin-bottom:12px">🎓</div>
         <h1 style="font-size:26px;font-weight:700;margin-bottom:4px">LAEN380 Quiz Portal</h1>
-        <p style="font-size:13px;color:#888">Academic Presentations in English — Mahidol University</p>
+        <p style="font-size:15px;color:#888">Academic Presentations in English — Mahidol University</p>
         ${modeTag}
       </div>
       ${error?`<div class="alert alert-red mb-4">${error}</div>`:''}
@@ -523,7 +565,7 @@ function showTeacherLogin(error=''){
         <input id="t-user" type="text" placeholder="Username" class="input"/>
         <input id="t-pass" type="password" placeholder="Password" class="input"/>
         <button onclick="handleTeacherLogin()" class="btn btn-dark w-full">Access Dashboard</button>
-        <button onclick="showLogin()" class="btn btn-outline w-full">← Back</button>
+        <button onclick="showLogin()" class="btn btn-outline w-full">← Back to Dashboard</button>
       </div>
     </div>
   </div>`);
@@ -537,10 +579,10 @@ function handleTeacherLogin(){
 // ---- INSTRUCTIONS ----
 function showInstructions(){
   const user=getUser();
-  render(`<div class="page fade-in" style="padding:40px 0"><div class="wrap-md">
+  renderPage(`<div class="page fade-in" style="padding:40px 0"><div class="wrap-md">
     <div class="card slide-up" style="padding:36px 32px">
       <h1 style="font-size:26px;font-weight:700;margin-bottom:4px">Welcome, ${user.name} 👋</h1>
-      <p style="font-size:13px;color:#888;margin-bottom:24px">Please read these instructions carefully.</p>
+      <p style="font-size:15px;color:#888;margin-bottom:24px">Please read these instructions carefully.</p>
       <div class="space-y-3">
         <div class="alert alert-light"><strong>📋 Structure:</strong> 8 parts covering various presentation skills. Complete in <strong>any order</strong>.</div>
         <div class="alert alert-light"><strong>🔄 Attempts:</strong> 3 attempts per part. <strong>Best score</strong> recorded. Correct answers shown only after <strong>attempt 3</strong>.</div>
@@ -549,7 +591,7 @@ function showInstructions(){
         <div class="alert alert-light"><strong>🎧 Media:</strong> Some questions include <strong>audio clips</strong> (🔊) and <strong>embedded videos</strong>.</div>
       </div>
       <button onclick="showDashboard()" class="btn btn-dark lg w-full" style="margin-top:28px">Open Quiz Dashboard →</button>
-    </div>
+    ${FOOTER_HTML}
   </div></div>`);
 }
 
@@ -569,21 +611,21 @@ async function showDashboard(){
     partsHTML+=`<div class="card slide-in" style="padding:20px;animation-delay:${i*0.04}s">
       <div class="flex items-start justify-between mb-3">
         <div class="flex items-center gap-3"><span style="font-size:26px">${p.icon}</span><div>
-          <h3 style="font-size:15px;font-weight:700;color:#111">Part ${i}: ${p.title}</h3>
-          <p style="font-size:12px;color:#aaa;margin-top:2px">${p.totalQ} questions</p></div></div>
+          <h3 style="font-size:18px;font-weight:700;color:#111">Part ${i}: ${p.title}</h3>
+          <p style="font-size:14px;color:#aaa;margin-top:2px">${p.totalQ} questions</p></div></div>
         <span class="badge ${badgeCls}">${pd.attempts===0?'Not started':pct+'%'}</span>
       </div>
-      <p style="font-size:12px;color:#888;margin-bottom:12px">${p.description}</p>
+      <p style="font-size:14px;color:#888;margin-bottom:12px">${p.description}</p>
       <div class="flex items-center justify-between">
-        <span style="font-size:12px;color:#aaa">Best: <strong style="color:#333">${pd.bestScore}/${p.totalQ}</strong> · Attempts: <strong style="color:#333">${pd.attempts}/${MAX_ATTEMPTS}</strong></span>
-        ${attLeft>0?`<button onclick="startQuiz(${i})" class="btn btn-dark sm">Start →</button>`:`<span style="font-size:12px;color:#aaa">Completed</span>`}
+        <span style="font-size:14px;color:#aaa">Best: <strong style="color:#333">${pd.bestScore}/${p.totalQ}</strong> · Attempts: <strong style="color:#333">${pd.attempts}/${MAX_ATTEMPTS}</strong></span>
+        ${attLeft>0?`<button onclick="startQuiz(${i})" class="btn btn-dark sm">Start →</button>`:`<span style="font-size:14px;color:#aaa">Completed</span>`}
       </div>
     </div>`;
   }
-  render(`<div class="page">
+  renderPage(`<div class="page">
     <div class="nav"><div class="nav-inner">
-      <div class="flex items-center gap-2"><span style="font-size:18px">🎓</span><strong style="font-family:'Outfit',sans-serif;color:#111">LAEN380</strong></div>
-      <div class="flex items-center gap-3"><span style="font-size:13px;color:#888" class="hide-mobile">${user.name}</span><button onclick="handleLogout()" class="btn btn-outline sm">Logout</button></div>
+      <div class="flex items-center gap-2">${NAV_LOGO_HTML}</div>
+      <div class="flex items-center gap-3"><span style="font-size:15px;color:#888" class="hide-mobile">${user.name}</span><button onclick="handleLogout()" class="btn btn-outline sm">Logout</button></div>
     </div></div>
     <div class="wrap" style="padding-top:28px;padding-bottom:40px">
       <div class="card fade-in mb-6" style="padding:24px;background:#111;color:#fff;border-color:#111">
@@ -600,7 +642,7 @@ async function showDashboard(){
       </div>
       <h3 style="font-size:16px;font-weight:700;color:#111;margin-bottom:14px">Quiz Parts</h3>
       <div class="grid grid-1 md-grid-2 gap-4">${partsHTML}</div>
-    </div>
+    ${FOOTER_HTML}
   </div>`);
 }
 
@@ -622,37 +664,37 @@ async function renderQuestion(){
   let qHTML='';
   if(currentQuiz.part===6&&part.videos){
     const vid=part.videos.find(v=>q.id>=v.qRange[0]&&q.id<=v.qRange[1]);
-    if(vid)qHTML+=`<div class="mb-4"><p style="font-size:13px;font-weight:600;color:#888;margin-bottom:8px">📹 ${vid.title}</p><div class="video-wrap"><iframe src="${vid.url}" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div></div>`;
+    if(vid)qHTML+=`<div class="mb-4"><p style="font-size:15px;font-weight:600;color:#888;margin-bottom:8px">📹 ${vid.title}</p><div class="video-wrap"><iframe src="${vid.url}" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div></div>`;
   }
-  if(q.audio)qHTML+=`<div class="mb-4"><button onclick="speakText(\`${q.audio.replace(/`/g,"'")}\`)" class="audio-btn">🔊 Listen to Clip</button></div>`;
-  qHTML+=`<p style="font-size:15px;font-weight:500;color:#111;line-height:1.7;margin-bottom:18px">${q.q}</p>`;
+  if(q.audio)qHTML+=audioHTML(q.audio);
+  qHTML+=`<p style="font-size:18px;font-weight:500;color:#111;line-height:1.7;margin-bottom:18px">${q.q}</p>`;
   if(q.type==='mcq'){
     const L=['A','B','C','D'];
     q.options.forEach((opt,i)=>{const sel=currentQuiz.answers[q.id]===i;
       qHTML+=`<div onclick="selectAnswer(${q.id},${i})" class="quiz-option ${sel?'selected':''}">
-        <span class="opt-letter">${L[i]}</span><span style="font-size:14px;color:#333;line-height:1.6">${opt}</span></div>`;});
+        <span class="opt-letter">${L[i]}</span><span style="font-size:17px;color:#333;line-height:1.6">${opt}</span></div>`;});
   } else if(q.type==='reorder'){
     if(!currentQuiz.answers[q.id])currentQuiz.answers[q.id]=shuffle([...Array(q.items.length).keys()]);
     const order=currentQuiz.answers[q.id];
-    qHTML+=`<p style="font-size:12px;color:#aaa;margin-bottom:10px">↕️ Drag to reorder (top = first / most casual → bottom = last / most formal)</p>`;
+    qHTML+=`<p style="font-size:14px;color:#aaa;margin-bottom:10px">↕️ Drag to reorder (top = first / most casual → bottom = last / most formal)</p>`;
     order.forEach((idx,pos)=>{
       qHTML+=`<div draggable="true" ondragstart="dragStart(event,${pos})" ondragover="dragOver(event,${pos})" ondrop="dropItem(event,${pos})" ondragend="dragEnd(event)" class="drag-item">
-        <span class="drag-num">${pos+1}</span><span style="font-size:13px;color:#333">${q.items[idx]}</span></div>`;});
+        <span class="drag-num">${pos+1}</span><span style="font-size:16px;color:#333">${q.items[idx]}</span></div>`;});
   }
-  render(`<div class="page">
+  renderPage(`<div class="page">
     <div class="nav"><div class="nav-inner" style="max-width:760px">
-      <button onclick="saveAndReturn()" class="btn btn-outline sm">← Back</button>
+      <button onclick="saveAndReturn()" class="btn btn-outline sm">← Back to Dashboard</button>
       <span style="font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:#333">${part.icon} Part ${currentQuiz.part}</span>
-      <span style="font-size:12px;color:#aaa">Attempt ${attemptNum}/3</span>
+      <span style="font-size:14px;color:#aaa">Attempt ${attemptNum}/3</span>
     </div></div>
     <div class="wrap-md" style="padding-top:20px;padding-bottom:40px">
-      <div class="mb-4"><div class="flex justify-between" style="font-size:12px;color:#aaa;margin-bottom:6px"><span>Question ${currentQuiz.qIndex+1} of ${total}</span><span>${progress}%</span></div>
+      <div class="mb-4"><div class="flex justify-between" style="font-size:14px;color:#aaa;margin-bottom:6px"><span>Question ${currentQuiz.qIndex+1} of ${total}</span><span>${progress}%</span></div>
         <div class="pbar"><div class="pfill" style="width:${progress}%"></div></div></div>
       <div class="card fade-in" style="padding:28px 24px">${qHTML}</div>
       <div class="flex justify-between gap-3" style="margin-top:20px">
-        <button onclick="${currentQuiz.qIndex>0?'prevQuestion()':'void(0)'}" class="btn btn-outline" ${currentQuiz.qIndex===0?'style="opacity:.35;cursor:default"':''}>← Prev</button>
-        <button onclick="saveProgress()" class="btn btn-outline sm">💾 Save</button>
-        ${currentQuiz.qIndex<total-1?`<button onclick="nextQuestion()" class="btn btn-dark">Next →</button>`:`<button onclick="submitQuiz()" class="btn btn-success">✓ Submit</button>`}
+        <button onclick="${currentQuiz.qIndex>0?'prevQuestion()':'void(0)'}" class="btn btn-outline" ${currentQuiz.qIndex===0?'style="opacity:.35;cursor:default"':''}>← Previous Question</button>
+        <button onclick="saveProgress()" class="btn btn-outline sm">💾 Save For Later</button>
+        ${currentQuiz.qIndex<total-1?`<button onclick="nextQuestion()" class="btn btn-dark">Next Question →</button>`:`<button onclick="submitQuiz()" class="btn btn-success">✓ Submit</button>`}
       </div>
     </div>
   </div>`);
@@ -668,7 +710,7 @@ function dropItem(e,pos){e.preventDefault();const q=QUIZ_DATA[currentQuiz.part].
 function nextQuestion(){if(currentQuiz.qIndex<QUIZ_DATA[currentQuiz.part].questions.length-1){currentQuiz.qIndex++;renderQuestion();window.scrollTo({top:0,behavior:'smooth'})}}
 function prevQuestion(){if(currentQuiz.qIndex>0){currentQuiz.qIndex--;renderQuestion();window.scrollTo({top:0,behavior:'smooth'})}}
 async function saveProgress(){const user=getUser(),data=await getUserData(user.email);if(!data.savedProgress)data.savedProgress={};
-  data.savedProgress[currentQuiz.part]={answers:currentQuiz.answers,qIndex:currentQuiz.qIndex};await saveUserData(user.email,data);alert('Progress saved!');}
+  data.savedProgress[currentQuiz.part]={answers:currentQuiz.answers,qIndex:currentQuiz.qIndex};await saveUserData(user.email,data);alert('Your current answers have been saved for now. You can continue completing this part of the quiz later.');}
 async function saveAndReturn(){await saveProgress();showDashboard();}
 
 async function submitQuiz(){
@@ -700,11 +742,11 @@ async function showResults(partNum,results,score,attemptNum){
       else if(showCorrect&&q.type==='reorder')detail=`<div style="margin-top:4px;font-size:11px;color:#666">Correct order: ${q.correctOrder.map((idx,pos)=>(pos+1)+'. '+q.items[idx].substring(0,35)+'...').join(' → ')}</div>`;
       rHTML+=`<div style="padding:10px 14px;border-radius:8px;background:#FEF2F2;border:1px solid #FECACA;margin-bottom:8px;font-size:13px"><strong style="color:#991B1B">✗ Q${i+1}</strong> <span style="color:#991B1B">Incorrect</span>${!showCorrect?'<span style="font-size:11px;color:#aaa;margin-left:6px">(Answer hidden until attempt 3)</span>':''}${detail}</div>`;}
   });
-  render(`<div class="page fade-in" style="padding:32px 0"><div class="wrap-md">
+  renderPage(`<div class="page fade-in" style="padding:32px 0"><div class="wrap-md">
     <div class="card text-center slide-up" style="padding:36px 28px;margin-bottom:20px">
       <div style="font-size:52px;margin-bottom:10px">${emoji}</div>
       <h2 style="font-size:26px;font-weight:700">${msg}</h2>
-      <p style="font-size:13px;color:#888;margin:6px 0 16px">Part ${partNum}: ${part.title} — Attempt ${attemptNum}</p>
+      <p style="font-size:15px;color:#888;margin:6px 0 16px">Part ${partNum}: ${part.title} — Attempt ${attemptNum}</p>
       <div style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:#F5F5F5;border-radius:999px">
         <span style="font-size:28px;font-weight:700;color:#111">${score}/${part.questions.length}</span><span style="color:#888">(${pct}%)</span>
       </div>
@@ -726,12 +768,12 @@ async function handleLogout(){
   for(let i=1;i<=TOTAL_PARTS;i++){const p=QUIZ_DATA[i],pd=data.parts[i];totalBest+=pd.bestScore;totalPossible+=p.totalQ;
     const pct=p.totalQ>0?Math.round(pd.bestScore/p.totalQ*100):0;
     sHTML+=`<div class="flex items-center justify-between" style="padding:10px 0;border-bottom:1px solid #F0F0F0">
-      <span style="font-size:13px;color:#555">${p.icon} Part ${i}: ${p.title}</span>
-      <span style="font-size:13px;font-weight:700;color:${pct>=80?'#166534':pct>=50?'#92400E':'#aaa'}">${pd.bestScore}/${p.totalQ} (${pct}%)</span></div>`;}
+      <span style="font-size:15px;color:#555">${p.icon} Part ${i}: ${p.title}</span>
+      <span style="font-size:16px;font-weight:700;color:${pct>=80?'#166534':pct>=50?'#92400E':'#aaa'}">${pd.bestScore}/${p.totalQ} (${pct}%)</span></div>`;}
   const overallPct=Math.round(totalBest/totalPossible*100),finalScore=(totalBest/totalPossible*15).toFixed(2);
-  render(`<div class="page-center fade-in">
+  renderPage(`<div class="page-center fade-in">
     <div class="card slide-up" style="padding:36px 32px;max-width:480px;width:100%">
-      <div class="text-center mb-6"><div style="font-size:42px;margin-bottom:8px">📊</div><h2 style="font-size:22px;font-weight:700">Score Summary</h2><p style="font-size:13px;color:#888">${user.name} — ${user.email}</p></div>
+      <div class="text-center mb-6"><div style="font-size:42px;margin-bottom:8px">📊</div><h2 style="font-size:22px;font-weight:700">Score Summary</h2><p style="font-size:15px;color:#888">${user.name} — ${user.email}</p></div>
       <div class="text-center" style="padding:16px;background:#111;border-radius:10px;margin-bottom:20px;color:#fff">
         <div style="font-size:36px;font-weight:700">${overallPct}%</div>
         <div style="font-size:13px;color:#999">${totalBest}/${totalPossible} total points</div>
@@ -779,7 +821,7 @@ function renderTeacherTable(studentList){
     const safeEmail = s.email.replace(/'/g,"\\'");
     tableHTML+=`<tr>
       <td style="font-weight:500;color:#111;white-space:nowrap">${s.name||'—'}</td>
-      <td style="font-size:12px;color:#888">${s.email}</td>
+      <td style="font-size:14px;color:#888">${s.email}</td>
       ${ps}
       <td class="text-center" style="font-weight:700;color:${pct>=80?'#166534':pct>=50?'#111':'#DC2626'}">${pct}%</td>
       <td class="text-center" style="font-weight:700;color:#111">${fs}</td>
@@ -791,7 +833,7 @@ function renderTeacherTable(studentList){
   const avgPct=studentList.length>0?Math.round(studentList.reduce((a,s)=>{if(!s.parts)return a;let t=0,p=0;for(let i=1;i<=TOTAL_PARTS;i++){t+=(s.parts[i]?s.parts[i].bestScore:0);p+=QUIZ_DATA[i].totalQ;}return a+(p>0?t/p*100:0);},0)/studentList.length)+'%':'—';
   const liveTag = firebaseReady ? '<span class="live-dot"></span>Live' : 'Local only';
 
-  render(`<div class="page">
+  renderPage(`<div class="page">
     <div class="nav"><div class="nav-inner" style="max-width:1200px">
       <div class="flex items-center gap-2"><span style="font-size:18px">📊</span><strong style="font-family:'Outfit',sans-serif;color:#111">Teacher Dashboard</strong>
         <span style="font-size:11px;color:#4ADE80;display:inline-flex;align-items:center;gap:2px;margin-left:8px">${liveTag}</span></div>
@@ -802,9 +844,9 @@ function renderTeacherTable(studentList){
     </div></div>
     <div class="wrap-lg" style="padding-top:24px;padding-bottom:40px">
       <div class="grid grid-1 md-grid-3 gap-4 mb-6">
-        <div class="card text-center" style="padding:20px"><div style="font-size:32px;font-weight:700;color:#111">${studentList.length}</div><div style="font-size:13px;color:#888">Total Students</div></div>
-        <div class="card text-center" style="padding:20px"><div style="font-size:32px;font-weight:700;color:#111">${activeCount}</div><div style="font-size:13px;color:#888">Active Students</div></div>
-        <div class="card text-center" style="padding:20px"><div style="font-size:32px;font-weight:700;color:#111">${avgPct}</div><div style="font-size:13px;color:#888">Average Score</div></div>
+        <div class="card text-center" style="padding:20px"><div style="font-size:32px;font-weight:700;color:#111">${studentList.length}</div><div style="font-size:15px;color:#888">Total Students</div></div>
+        <div class="card text-center" style="padding:20px"><div style="font-size:32px;font-weight:700;color:#111">${activeCount}</div><div style="font-size:15px;color:#888">Active Students</div></div>
+        <div class="card text-center" style="padding:20px"><div style="font-size:32px;font-weight:700;color:#111">${avgPct}</div><div style="font-size:15px;color:#888">Average Score</div></div>
       </div>
       <div class="card overflow-x-auto">
         <table><thead><tr><th>Name</th><th>Email</th>${pH}<th class="text-center">Overall</th><th class="text-center">Grade/15</th><th class="text-center">Actions</th></tr></thead>
@@ -845,7 +887,7 @@ async function openStudentModal(email){
   const modalHTML=`<div class="modal-overlay" onclick="if(event.target===this)closeModal()">
     <div class="modal slide-up">
       <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px">
-        <div><h3 style="font-size:18px;font-weight:700">${data.name||'Student'}</h3><p style="font-size:12px;color:#888">${email}</p></div>
+        <div><h3 style="font-size:18px;font-weight:700">${data.name||'Student'}</h3><p style="font-size:14px;color:#888">${email}</p></div>
         <button onclick="closeModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#aaa;padding:0">✕</button>
       </div>
       <div style="font-size:12px;color:#666;padding:12px;background:#F5F5F5;border-radius:8px;margin-bottom:16px;line-height:1.7">
@@ -891,9 +933,22 @@ async function exportCSV(){
   studentList.forEach(s=>{
     if(!s.parts)return;
     let row=`"${s.name||''}","${s.email||''}"`,tB=0,tP=0;
-    for(let i=1;i<=TOTAL_PARTS;i++){const pd=s.parts[i]||{bestScore:0,attempts:0};row+=`,${pd.bestScore},${pd.attempts}`;tB+=pd.bestScore;tP+=QUIZ_DATA[i].totalQ;}
+    for(let i=1;i<=TOTAL_PARTS;i++){const pd=s.parts[i,
+    {id:16,type:'reorder',q:"Arrange from MOST CASUAL to MOST FORMAL — Asking someone to be quiet:",items:["Shh, keep it down!", "Could you lower your voice a bit?", "Would you mind speaking more softly, please?", "I would kindly request that you reduce the volume of your conversation."],correctOrder:[0, 1, 2, 3]},
+    {id:17,type:'reorder',q:"Arrange from MOST CASUAL to MOST FORMAL — Introducing yourself:",items:["Hey, I'm Nong.", "Hi, my name is Nong Kaew.", "Good morning, my name is Kaew and I am a second-year student.", "Allow me to introduce myself. My name is Kaew Jaidee, and I am a second-year engineering student at Mahidol University."],correctOrder:[0, 1, 2, 3]},
+    {id:18,type:'reorder',q:"Arrange from MOST CASUAL to MOST FORMAL — Responding to a compliment:",items:["Thanks, that's sweet!", "Thank you, I appreciate that.", "That is very kind of you to say. Thank you.", "I am deeply grateful for your generous and thoughtful words of encouragement."],correctOrder:[0, 1, 2, 3]}
+  ]||{bestScore:0,attempts:0};row+=`,${pd.bestScore},${pd.attempts}`;tB+=pd.bestScore;tP+=QUIZ_DATA[i].totalQ;}
     row+=`,${tB},${tP},${tP>0?(tB/tP*100).toFixed(1):0},${tP>0?(tB/tP*15).toFixed(2):'0.00'}`;csv+=row+'\n';});
-  const blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  const blob=new Blob([csv,
+    {id:16,type:'mcq',q:"You are presenting a technical research finding to a non-specialist audience. Midway through, you realize the audience looks confused by your terminology. What is the BEST adjustment?",options:["Continue with the technical terms since changing mid-presentation would seem unprofessional and inconsistent", "Pause and reframe your key concepts using everyday analogies and simpler language, then check for understanding", "Apologize for the complexity and suggest they read the published paper for a clearer explanation later", "Skip the technical sections entirely and jump directly to your conclusion and recommendations"],correct:1},
+    {id:17,type:'mcq',q:"During an important client presentation, your laptop battery dies unexpectedly and there is no power outlet nearby. What is the BEST immediate response?",options:["Ask a colleague if you can present from their device using your cloud-saved backup file", "End the presentation early and propose rescheduling the remaining portion for another day", "Attempt to recall all remaining slides from memory and deliver them without any visual support", "Ask the client to wait while you search the building for an available power outlet to use"],correct:0}
+  ,
+    {id:16,type:'mcq',q:"The Moth Story Map framework is best described as a storytelling approach that emphasizes:",options:["Structured five-step psychological persuasion designed to drive immediate purchasing action", "Personal vulnerability and authentic emotional connection for building trust with the audience", "Systematic cause-and-effect analysis to establish logical credibility through supporting data", "Quick problem-agitate-solve cycles optimized for short-form advertising and cold outreach"],correct:1},
+    {id:17,type:'mcq',q:"When combining storytelling frameworks with cognitive biases for maximum persuasive impact, pairing Monroe's Motivated Sequence with the Framing Effect produces what result?",options:["The 'Visionary' approach \u2014 redefining perceived value through strategic information presentation", "The 'Bandwagon' approach \u2014 building massive trust by showcasing widespread social adoption", "The 'Panic Button' approach \u2014 creating immediate urgency through loss aversion techniques", "The 'Underdog' approach \u2014 generating sympathy through a relatable rags-to-riches narrative"],correct:0}
+  ,
+    {id:16,type:'mcq',q:"What organizational pattern does this presentation use?",options:["Chronological pattern \u2014 arranging events in sequential time-based order", "Cause-effect pattern \u2014 explaining how one factor leads to specific outcomes", "Argumentative pattern \u2014 building a persuasive case supported by evidence", "Problem-solution pattern \u2014 presenting a challenge then proposing targeted remedies"],correct:2},
+    {id:17,type:'mcq',q:"What organizational pattern does this presentation use?",options:["Topical pattern \u2014 organizing a subject into distinct thematic categories", "Chronological pattern \u2014 arranging historical events in time-based order", "Sequential pattern \u2014 presenting ordered steps in a systematic procedure", "Problem-solution pattern \u2014 identifying challenges and proposing fixes"],correct:2}
+  ],{type:'text/csv'}),url=URL.createObjectURL(blob),a=document.createElement('a');
   a.href=url;a.download='LAEN380_Quiz_Scores.csv';a.click();URL.revokeObjectURL(url);
 }
 
