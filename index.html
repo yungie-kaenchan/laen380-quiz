@@ -23,12 +23,12 @@ input,button{font-family:inherit;font-size:inherit}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .confetti-piece{position:fixed;top:-10px;animation:confetti 3s ease-out forwards;pointer-events:none;z-index:9999}
-.page{min-height:100vh;background:#FAFAFA url("bg.png") center/cover fixed}
+.page{min-height:100vh;background:#FAFAFA url("bg.png") center/cover fixed;display:flex;flex-direction:column}
 .page-center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#F5F5F5 url("bg.png") center/cover fixed}
-.wrap{max-width:960px;margin:0 auto;padding:24px 40px}
+.wrap{max-width:960px;margin:0 auto;padding:24px 40px;flex:1}
 .wrap-sm{max-width:560px;margin:0 auto;padding:24px 40px}
-.wrap-md{max-width:780px;margin:0 auto;padding:24px 40px}
-.wrap-lg{max-width:1240px;margin:0 auto;padding:24px 40px}
+.wrap-md{max-width:780px;margin:0 auto;padding:24px 40px;flex:1}
+.wrap-lg{max-width:1240px;margin:0 auto;padding:24px 40px;flex:1}
 .card{background:#fff;border-radius:12px;border:1px solid #E5E5E5;box-shadow:0 1px 3px rgba(0,0,0,.04)}
 .btn{display:inline-flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:600;border-radius:10px;transition:all .25s;cursor:pointer;border:none;font-size:16px}
 .btn-dark{background:#111;color:#fff;padding:13px 30px}.btn-dark:hover{background:#333;box-shadow:0 6px 20px rgba(0,0,0,.15)}
@@ -87,10 +87,10 @@ td{padding:10px 14px;font-size:14px;color:#333}tr:hover td{background:#FAFAFA}tb
 .spinner{width:28px;height:28px;border:3px solid #E5E5E5;border-top-color:#111;border-radius:50%;animation:spin .6s linear infinite;margin:0 auto}
 .loading-page{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#888;font-size:16px}
 .live-dot{width:8px;height:8px;border-radius:50%;background:#4ADE80;display:inline-block;margin-right:6px;animation:pulse 2s infinite}
-.site-footer{background:#111;color:#999;padding:28px 40px;text-align:center;font-size:14px;line-height:1.8}
+.site-footer{background:#111;color:#aaa;padding:32px 40px 28px;text-align:center;font-size:13px;line-height:1.9;margin-top:auto;width:100%;border-top:1px solid #222}
 .site-footer a{color:#ccc;text-decoration:underline}.site-footer a:hover{color:#fff}
-.cc-badges{display:inline-flex;align-items:center;gap:6px;margin-top:6px}
-.cc-badges img{height:22px;opacity:.85}
+
+
 .flex{display:flex}.flex-col{flex-direction:column}.items-center{align-items:center}.items-start{align-items:start}
 .justify-between{justify-content:space-between}.justify-center{justify-content:center}
 .gap-2{gap:8px}.gap-3{gap:12px}.gap-4{gap:16px}.flex-1{flex:1}
@@ -246,7 +246,7 @@ function launchConfetti(){
   el.style.animationDuration=(Math.random()*2+2)+'s';document.body.appendChild(el);
   setTimeout(()=>el.remove(),5000);}
 }
-const FOOTER_HTML=`<footer class="site-footer"><div>Designed, curated, and created by <strong>Dr. Payungsak Kaenchan, EdD</strong> | Faculty of Liberal Arts, Mahidol University</div><div class="cc-badges"><img src="https://licensebuttons.net/l/by-nc/4.0/88x31.png" alt="CC BY-NC 4.0"/></div><div style="margin-top:4px;font-size:13px">Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</a>. Attributions must be cited. No commercial use.</div></footer>`;
+const FOOTER_HTML=`<footer class="site-footer"><div style="max-width:640px;margin:0 auto"><div style="font-size:14px;color:#ccc;margin-bottom:10px">Designed, curated, and created by <strong style="color:#fff">Dr. Payungsak Kaenchan, EdD</strong></div><div style="font-size:13px;color:#888;margin-bottom:12px">Faculty of Liberal Arts, Mahidol University</div><div style="margin-bottom:8px"><img src="https://licensebuttons.net/l/by-nc/4.0/88x31.png" alt="CC BY-NC 4.0" style="height:24px;opacity:.7"/></div><div style="font-size:12px;color:#777">Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" style="color:#aaa">CC BY-NC 4.0</a> · Attribution required · Non-commercial use only</div></div></footer>`;
 const NAV_LOGO_HTML=`<div class="nav-logo"><span style="font-size:20px">🎓</span><div class="nav-logo-text">LAEN380<span class="nav-logo-sub">Academic Presentations in English</span></div></div>`;
 
 function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
@@ -591,7 +591,6 @@ function showInstructions(){
         <div class="alert alert-light"><strong>🎧 Media:</strong> Some questions include <strong>audio clips</strong> (🔊) and <strong>embedded videos</strong>.</div>
       </div>
       <button onclick="showDashboard()" class="btn btn-dark lg w-full" style="margin-top:28px">Open Quiz Dashboard →</button>
-    ${FOOTER_HTML}
   </div></div>`);
 }
 
@@ -642,7 +641,6 @@ async function showDashboard(){
       </div>
       <h3 style="font-size:16px;font-weight:700;color:#111;margin-bottom:14px">Quiz Parts</h3>
       <div class="grid grid-1 md-grid-2 gap-4">${partsHTML}</div>
-    ${FOOTER_HTML}
   </div>`);
 }
 
@@ -709,9 +707,10 @@ function dropItem(e,pos){e.preventDefault();const q=QUIZ_DATA[currentQuiz.part].
   if(dragStartPos!==null&&dragStartPos!==pos){const item=order.splice(dragStartPos,1)[0];order.splice(pos,0,item);}dragStartPos=null;renderQuestion();}
 function nextQuestion(){if(currentQuiz.qIndex<QUIZ_DATA[currentQuiz.part].questions.length-1){currentQuiz.qIndex++;renderQuestion();window.scrollTo({top:0,behavior:'smooth'})}}
 function prevQuestion(){if(currentQuiz.qIndex>0){currentQuiz.qIndex--;renderQuestion();window.scrollTo({top:0,behavior:'smooth'})}}
-async function saveProgress(){const user=getUser(),data=await getUserData(user.email);if(!data.savedProgress)data.savedProgress={};
-  data.savedProgress[currentQuiz.part]={answers:currentQuiz.answers,qIndex:currentQuiz.qIndex};await saveUserData(user.email,data);alert('Your current answers have been saved for now. You can continue completing this part of the quiz later.');}
-async function saveAndReturn(){await saveProgress();showDashboard();}
+async function saveProgressSilent(){const user=getUser(),data=await getUserData(user.email);if(!data.savedProgress)data.savedProgress={};
+  data.savedProgress[currentQuiz.part]={answers:currentQuiz.answers,qIndex:currentQuiz.qIndex};await saveUserData(user.email,data);}
+async function saveProgress(){await saveProgressSilent();alert('Your current answers have been saved for now. You can continue completing this part of the quiz later.');}
+async function saveAndReturn(){await saveProgressSilent();showDashboard();}
 
 async function submitQuiz(){
   showLoading('Submitting...');
