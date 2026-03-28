@@ -139,6 +139,22 @@ try {
 }
 
 const TEACHER_USER='yungie', TEACHER_PASS='yungie1234', MAX_ATTEMPTS=3, TOTAL_PARTS=8;
+const ROSTER = [
+  {name:"SASATORN NAMYUYEN", email:"sasatorn@student.mahidol.edu", pass:"sasa2026"},
+  {name:"THANAKORN SOPHASRIPHAN", email:"thanakorn@student.mahidol.edu", pass:"than2026"},
+  {name:"PIYABHUM PULJUN", email:"piyabhum@student.mahidol.edu", pass:"piya2026"},
+  {name:"PAULPAVEE SAWANKHATHAT", email:"paulpavee@student.mahidol.edu", pass:"paul2026"},
+  {name:"MAYTHAD RATTANATHAMWAT", email:"maythad@student.mahidol.edu", pass:"mayth2026"},
+  {name:"PARIYAKORN POKCHARASPREEDA", email:"pariyakorn@student.mahidol.edu", pass:"pari2026"},
+  {name:"PHONGSAN KONGTHAWORNWAT", email:"phongsan@student.mahidol.edu", pass:"phong2026"},
+  {name:"ANCHASA WATTHANAPHONPAIBUN", email:"anchasa@student.mahidol.edu", pass:"anch2026"},
+  {name:"AYE NANDAR HTUN", email:"aye@student.mahidol.edu", pass:"aye2026"},
+  {name:"WAI YAN LIN HTET", email:"waiyan@student.mahidol.edu", pass:"wai2026"},
+  {name:"WORANAN CHAIRANGSEE", email:"woranan@student.mahidol.edu", pass:"wora2026"},
+  {name:"THUNYALAK RUENGPANICH", email:"thunyalak@student.mahidol.edu", pass:"thun2026"},
+  {name:"Teacher Yungie", email:"yungie@mahidol.edu", pass:"yungie1234", isTeacher:true}
+];
+
 
 // ---- SESSION (always local) ----
 function getUser(){return JSON.parse(sessionStorage.getItem('laen380_user')||'null')}
@@ -370,66 +386,75 @@ const QUIZ_DATA = {
     color: "brand",
     description: "Choose the best responses using the START model (Situation, Task, Action, Result, Takeaway).",
     totalQ: 20,
-    questions: [
+        questions: [
       { id:1, type:'mcq', q:"Interview question: 'Tell me about a time you showed leadership.' Which response BEST follows the START model?", options:[
-        "I'm a natural leader. I always take charge in group projects and make sure things get done on time. People look up to me.",
-        "During my third year, our capstone team lost motivation after a poor midterm review. As team lead, I organized a retreat, reassigned tasks to match strengths, and introduced weekly stand-ups. We finished with the top grade in our cohort. I learned that leadership means empowering others, not controlling them.",
-        "Leadership is important in every organization. I believe that a good leader should listen, communicate, and be fair to all team members.",
-        "I led a group project once. We had some problems but worked them out. The project was successful in the end."
+        "I consider myself a natural leader who consistently takes charge in group settings, delegates tasks efficiently to capable team members, ensures all deadlines are met on schedule, and motivates the whole group to deliver excellent outcomes every time.",
+        "During my third year, our capstone team lost motivation after a poor midterm review. As team lead, I organized a retreat, reassigned tasks to match strengths, and introduced weekly stand-ups. We earned the top grade, and I realized that leadership means empowerment.",
+        "Effective leadership requires several essential qualities including active listening, clear and transparent communication, consistently fair treatment of all team members, and the ability to build a supportive collaborative environment where every individual feels valued.",
+        "I was appointed leader of a major group project at my faculty. We encountered significant obstacles along the way, including scheduling conflicts and disagreements on methodology, but we resolved them through open discussion and ultimately submitted all deliverables on time."
       ], correct:1 },
-      { id:2, type:'mcq', q:"Which component of the START model is MISSING from this response? 'In my internship, I had to handle a difficult client. I scheduled multiple meetings and found a compromise. The client renewed their contract.'", options:["Situation","Task","Action","Takeaway"], correct:3 },
+      { id:2, type:'mcq', q:"Which component of the START model is MISSING from this response? 'In my internship, I had to handle a difficult client who was dissatisfied with our service. I scheduled multiple meetings, actively listened to their concerns, and proposed a tailored compromise. The client ultimately renewed their annual contract.'", options:["Situation — the background context and setting for the story are insufficiently developed in the response","Task — the speaker's assigned duties and specific responsibilities are not clearly articulated in this answer","Action — the concrete strategic steps and decisions the speaker implemented are absent from the narrative","Takeaway — there is no concluding reflection on personal growth, lessons learned, or future applications"], correct:3 },
       { id:3, type:'mcq', q:"Interview question: 'Describe a failure and how you recovered.' Which response BEST uses the START model?", options:[
-        "I failed a midterm once but studied harder and did better next time.",
-        "During my final year, I took on a leadership role in a group project. I struggled to delegate effectively, and the project fell behind. Realizing my mistake, I reorganized tasks, sought input from others, and improved communication. We completed the project on time with top marks. I learned that being a good leader means taking action for the benefit of the whole team.",
-        "Everyone fails sometimes. The key is to never give up and keep trying. I always maintain a positive attitude.",
-        "I once made a mistake in a lab report. My professor noticed it and asked me to redo it."
+        "I failed a crucial midterm examination rather badly, which was both disappointing and very stressful for me. I committed to studying significantly harder for all remaining assessments, attended extra tutorial sessions, and ultimately managed to raise my overall semester grade considerably.",
+        "During my final year, I struggled to delegate effectively as team leader, and our project fell behind schedule. I reorganized tasks, sought input from teammates, and improved communication channels. We finished with top marks, and I learned that good leadership means serving others.",
+        "I believe everyone inevitably experiences some form of failure at various points in their academic and professional careers. The crucial thing is to maintain a consistently positive attitude, avoid giving up, keep pushing forward with real determination, and trust the process of growth.",
+        "A supervisor once identified significant methodological errors in a lab report I submitted for formal review. The professor carefully documented each mistake, provided comprehensive written feedback on all areas needing improvement, and then asked me to revise and resubmit the entire document."
       ], correct:1 },
-      { id:4, type:'mcq', q:"In the START model, the 'Takeaway' component serves to:", options:["Describe the initial context of the story","List the specific responsibilities you had","Demonstrate growth, self-awareness, and future application","Quantify the outcomes of your actions"], correct:2 },
-      { id:5, type:'mcq', q:"'Picture this: it's midnight, the project deadline is 6 hours away, and our group chat is full of panic.' This opening exemplifies which START component?", options:["Situation — using vivid language to set the scene","Task — describing responsibilities","Action — showing what was done","Result — quantifying the outcome"], correct:0 },
+      { id:4, type:'mcq', q:"In the START model, the 'Takeaway' component serves to:", options:["Describe the initial setting, background context, and relevant circumstances that frame the entire situation clearly","List the specific duties, assigned goals, and concrete responsibilities the speaker was given in that role","Demonstrate personal growth, genuine self-awareness, and how the lesson will be applied in future contexts","Quantify the measurable outcomes, tangible achievements, and overall impact that resulted from all actions"], correct:2 },
+      { id:5, type:'mcq', q:"'Picture this: it is midnight, the project deadline is six hours away, and our group chat is full of panic.' This opening exemplifies which START component?", options:["Situation — establishing the scene effectively with vivid, attention-grabbing contextual language and detail","Task — outlining the specific duties, assigned challenges, and deliverables expected of the speaker","Action — describing the strategic steps, concrete decisions, and approaches the speaker implemented","Result — presenting the measurable outcomes, tangible achievements, and feedback received afterward"], correct:0 },
       { id:6, type:'mcq', q:"Interview question: 'What is your weakness?' Which response BEST applies the START model?", options:[
-        "I don't really have any weaknesses. I'm a perfectionist, which is actually a strength.",
-        "My weakness is that I'm too honest sometimes. But I think honesty is important.",
-        "Earlier in my studies, I struggled with time management. I took on too many projects at once. I began using digital planners and time-blocking, and prioritized tasks. The result was improved grades and on-time submissions. I learned that discipline matters more than sheer effort, and today I carefully evaluate commitments before saying yes.",
-        "I'm not very good at public speaking, but I'm working on it."
+        "I genuinely do not believe I possess any significant weaknesses at this current stage of my academic career. Colleagues have sometimes said I tend toward perfectionism, but I truly consider that inclination to be a strength that consistently pushes me toward excellence.",
+        "My primary weakness is that I tend to be excessively honest and forthright when delivering feedback in professional and academic contexts. However, I sincerely believe that maintaining transparency and openness are always the most constructive policies in any collaborative environment.",
+        "Earlier in my studies, I struggled with time management and frequently overcommitted to too many projects simultaneously. I adopted digital planners and priority-setting techniques, which improved my grades and submission rates. I learned that strategic discipline matters more than raw effort.",
+        "I openly acknowledge that public speaking has always been a challenging area that has caused me considerable anxiety throughout my studies. Nevertheless, I have been actively working to improve my confidence and delivery skills through regular participation in workshops and practice sessions."
       ], correct:2 },
-      { id:7, type:'mcq', q:"A scholarship interview asks: 'Why should we choose you?' Which response element would be weakest?", options:[
-        "Describing a specific achievement with measurable results",
-        "Saying 'I really want this scholarship and will work very hard'",
-        "Connecting your past experience to the scholarship's mission",
-        "Reflecting on how the opportunity aligns with your goals"
+      { id:7, type:'mcq', q:"A scholarship interview asks: 'Why should we choose you?' Which response element would be the WEAKEST application of the START model?", options:[
+        "Describing a specific past achievement supported by concrete measurable results and independently verifiable quantifiable outcomes","Expressing strong personal desire and enthusiasm by saying you genuinely want the scholarship and sincerely promise to work hard","Connecting relevant past academic experiences and documented extracurricular accomplishments directly to the scholarship's stated mission","Reflecting thoughtfully on how the scholarship opportunity aligns with and meaningfully supports your long-term professional career goals"
       ], correct:1 },
       { id:8, type:'mcq', q:"Which is the BEST 'Action' component for the question 'Tell me about a time you resolved a conflict'?", options:[
-        "I felt uncomfortable about the situation and waited for it to resolve itself.",
-        "I set up structured meetings, encouraged open but respectful discussions, and clarified action steps for each team member.",
-        "Conflict is natural in any team environment.",
-        "We eventually figured things out and moved on."
+        "I felt quite uncomfortable about the escalating interpersonal tensions within the team and ultimately decided to wait patiently, hoping that the disagreement would resolve itself naturally over the next few days.",
+        "I organized structured mediation meetings, established clear ground rules for respectful open discussion, and created written action steps with specific deadlines to ensure personal accountability for every involved team member.",
+        "Interpersonal conflict is an inevitable and completely natural occurrence in any collaborative team environment, requiring significant patience, mutual understanding, willingness to compromise, and sincere respect from all involved parties.",
+        "After experiencing initial confusion and considerable frustration among all the team members involved, we eventually talked things through in several informal conversations and managed to move forward together on the project."
       ], correct:1 },
-      { id:9, type:'mcq', q:"Which 'Result' statement is STRONGEST?", options:[
-        "Things worked out well in the end.",
-        "The tension eased, and we delivered the project one week early, earning strong feedback from our professor.",
-        "Everyone was happy with the result.",
-        "The project was completed successfully."
+      { id:9, type:'mcq', q:"Which 'Result' statement is the STRONGEST example of effective START model application?", options:[
+        "After all of our collective efforts and sustained hard work throughout that particularly challenging and demanding semester, things eventually turned out reasonably well for everyone involved in the collaborative project.",
+        "The interpersonal tension eased considerably, and we delivered our completed project one full week ahead of the official deadline, earning the highest feedback score from our supervising professor across all teams.",
+        "In the end, every single team member expressed genuine satisfaction with how the entire project concluded, and we all felt positive and grateful about the meaningful collaborative learning experience we shared.",
+        "The project ultimately reached successful completion within the originally established timeline parameters, meeting all of the basic requirements and minimum standards outlined in the detailed course assignment brief."
       ], correct:1 },
-      { id:10, type:'mcq', q:"Which 'Takeaway' statement demonstrates the deepest reflection?", options:[
-        "I learned that teamwork is important.",
-        "I learned that challenges are less about obstacles and more about guiding people toward shared goals. Now I treat conflict as a chance to build stronger collaboration.",
-        "It was a good learning experience overall.",
-        "I won't make the same mistake again."
+      { id:10, type:'mcq', q:"Which 'Takeaway' statement demonstrates the DEEPEST level of personal reflection?", options:[
+        "Looking back on that experience now, I came to understand that effective teamwork is genuinely important in professional settings and that real collaboration requires sustained patience and consistent effort from everyone.",
+        "That experience taught me that challenges are about guiding people toward shared goals rather than battling obstacles alone. I now approach every conflict as a valuable opportunity to build stronger collaborative bonds.",
+        "Overall, I honestly consider that entire experience to have been an extremely valuable, productive, and deeply meaningful learning opportunity that has contributed significantly to both my personal and professional development.",
+        "After reflecting on that challenging situation carefully and thoroughly, I made a sincere firm commitment to myself that I would never allow the same mistakes to occur again in any future professional context."
       ], correct:1 },
-      { id:11, type:'mcq', q:"During a presentation Q&A, someone challenges your data aggressively. Which response strategy is BEST?", options:[
-        "Validate their concern, then stand firm with your evidence","Ignore the question and move on","Agree with them to avoid conflict","Challenge them back with your own questions"], correct:0 },
-      { id:12, type:'mcq', q:"An audience member asks: 'Can you explain the link between learning styles and learning theories? I'm confused.' This is a:", options:["Challenge question","Expansion question","Clarification question","Off-topic question"], correct:2 },
-      { id:13, type:'mcq', q:"After a presentation, someone says: 'You talked about the ABC model. It was really thought-provoking. Thank you.' This is:", options:["A challenge question","Positive feedback","A clarification request","An off-topic question"], correct:1 },
-      { id:14, type:'mcq', q:"Which response to a hostile question demonstrates the 'empathize' strategy?", options:[
-        "'You're wrong and here's why.'","'I understand your frustration. This is a complex issue, and I appreciate you raising it.'","'That's not what I said at all.'","'Next question please.'"], correct:1 },
-      { id:15, type:'mcq', q:"When receiving an unfocused question you don't understand, the BEST first step is:", options:["Answer it broadly to cover all possibilities","Ask the questioner to repeat or rephrase it","Skip to the next question","Provide a generic answer"], correct:1 },
+      { id:11, type:'mcq', q:"During a presentation Q&A, someone challenges your data aggressively and questions your research methodology. Which response strategy is BEST?", options:[
+        "Validate their concern genuinely, acknowledge the complexity of the issue, then stand firm by presenting additional supporting evidence for your research methodology calmly","Ignore the challenging question entirely and transition smoothly to another audience member, maintaining your composure while avoiding any engagement with the critic's points","Immediately agree with all aspects of their criticism to quickly defuse the interpersonal tension and prevent any further uncomfortable confrontational exchanges during the session","Directly challenge them back by publicly questioning their own qualifications, expertise, and depth of knowledge on the specific subject matter under discussion"], correct:0 },
+      { id:12, type:'mcq', q:"An audience member says: 'Can you explain the link between learning styles and learning theories you mentioned? I am confused.' This is a:", options:["Challenge question — critically testing the presenter's depth of expertise, credibility, and command of the subject matter presented","Expansion question — requesting additional supporting details, supplementary examples, and deeper elaboration on the topic discussed","Clarification question — seeking improved understanding of a specific point that was confusing or insufficiently explained earlier","Off-topic question — raising an unrelated issue that falls outside the boundaries and intended scope of the presentation topic"], correct:2 },
+      { id:13, type:'mcq', q:"After a presentation, someone says: 'You talked about the ABC model. It was really thought-provoking. Thank you.' This is:", options:["A challenge question designed to subtly test the presenter's depth of knowledge and expertise on the specific topic presented","Positive feedback expressing genuine appreciation and personal engagement with the quality and substance of the content delivered","A clarification request indirectly asking the presenter to provide additional details and more thorough explanation of the model","An off-topic comment that diverges from the central thesis and does not substantively relate to the presentation's core topic"], correct:1 },
+      { id:14, type:'mcq', q:"Which response to a hostile question demonstrates the 'empathize' strategy most effectively?", options:[
+        "'I appreciate your perspective, but I must respectfully note that your interpretation of our data appears to be fundamentally incorrect based on the methodology and sources we used throughout.'",
+        "'I understand your frustration with this complex issue, and I genuinely appreciate you taking the time to raise such a thoughtful and important concern during today's discussion session.'",
+        "'That is not what I communicated during the presentation, and I would encourage you to review the slides more carefully and reconsider your interpretation of the key remarks I made.'",
+        "'Thank you for contributing your thoughts on this matter. However, due to our limited remaining time, let us proceed to the next question from a different audience member please.'"
+      ], correct:1 },
+      { id:15, type:'mcq', q:"When receiving an unfocused question you do not fully understand, the BEST first step is:", options:["Attempt to answer it as broadly and comprehensively as possible, covering all likely interpretations to ensure you address whatever the questioner intended","Politely ask the questioner to kindly repeat or rephrase their question using different words so that you can provide the most accurate and relevant response","Move past it efficiently and promptly call on the next audience member who appears to have a prepared question, in order to maintain the session's momentum","Offer a general and diplomatically vague response that acknowledges the topic area without directly engaging with any specific interpretation of the question"], correct:1 },
       { id:16, type:'mcq', q:"Interview question: 'Tell me about a time you worked under pressure.' Which START opening is MOST effective?", options:[
-        "'I work under pressure all the time.'","'It was the night before our engineering prototype demonstration, and three critical components had failed testing.'","'Pressure is something I handle well.'","'Once I had a deadline that was very tight.'"], correct:1 },
-      { id:17, type:'mcq', q:"Which models are suggested for answering behavioral questions?", options:["STAR, START, SOAR, CAR","PAS, Monroe's Sequence, Hero's Journey","Triple E's, Patterns of Organization","Pixar Pitch, Moth Story Map"], correct:0 },
-      { id:18, type:'mcq', q:"In the START model, what distinguishes it from the STAR model?", options:["START includes 'Technique'","START includes 'Takeaway'","START includes 'Theory'","START includes 'Timeline'"], correct:1 },
-      { id:19, type:'mcq', q:"A weak response to 'What is your biggest challenge?' typically:", options:["Includes a specific story with measurable results","Is too vague with no clear situation and uses cliché takeaways","Uses vivid language to set the scene","Demonstrates growth and self-awareness"], correct:1 },
-      { id:20, type:'mcq', q:"When someone asks an irrelevant question during Q&A, which approach is MOST professional?", options:[
-        "'That's outside today's scope, but I'd be happy to discuss it after the session.'","'That has nothing to do with my presentation.'","'I don't know anything about that topic.'","Simply ignore the question."], correct:0 }
+        "'Working under pressure is something I encounter constantly throughout my academic life, and I genuinely believe I always manage to handle it quite competently and with a positive attitude.'",
+        "'It was the night before our engineering prototype demonstration, and three critical components had just catastrophically failed their final round of rigorous pre-presentation performance testing.'",
+        "'Managing pressure effectively is something I consider to be among my strongest and most reliable professional skills, which gives me consistent confidence when facing high-stakes challenging situations.'",
+        "'There was a time when I faced a particularly tight deadline for an important university assignment, which required me to organize my schedule very carefully and work quickly to finish.'"
+      ], correct:1 },
+      { id:17, type:'mcq', q:"Which models are specifically suggested for structuring answers to behavioral interview questions?", options:["STAR, START, SOAR, and CAR — structured frameworks specifically designed for organizing coherent behavioral interview responses","PAS, Monroe's Sequence, and Hero's Journey — narrative persuasion frameworks optimized for delivering compelling storytelling-based arguments","Triple E's and Patterns of Organization — analytical frameworks designed for structuring the body content of academic presentation scripts","Pixar Pitch and Moth Story Map — creative narrative arc frameworks best suited for building emotionally engaging personal brand stories"], correct:0 },
+      { id:18, type:'mcq', q:"In the START model, what specifically distinguishes it from the standard STAR model?", options:["START incorporates a 'Technique' component for systematically describing the specific methods and strategic approaches that were used","START incorporates a 'Takeaway' component for thoughtfully reflecting on personal growth, key lessons learned, and future applications","START incorporates a 'Theory' component for explicitly connecting the actions taken to established academic frameworks and research models","START incorporates a 'Timeline' component for meticulously organizing all events and decisions into a strict chronological sequential order"], correct:1 },
+      { id:19, type:'mcq', q:"A weak response to 'What is your biggest challenge?' typically has which characteristic?", options:["It includes a highly specific and detailed story supported by concrete measurable results, verifiable outcomes, and clear evidence of achievement","It remains unacceptably vague with no clear situational context, lacks concrete detail, and relies on overly generic and formulaic cliché takeaways","It employs vivid, sensory, and descriptive language to effectively establish an engaging and memorable opening scene that captures the listener's interest","It demonstrates meaningful personal growth, genuine deep self-awareness, and thoughtful reflective maturity about how the experience shaped future behavior"], correct:1 },
+      { id:20, type:'mcq', q:"When someone asks an irrelevant question during a Q&A session, which approach is the MOST professional?", options:[
+        "Acknowledge the question politely, note that it falls outside today's scope, offer to discuss it privately after the session concludes, and redirect attention to the topic.",
+        "Inform the audience member directly and firmly that their question has no relevance to the presentation topic and therefore does not warrant any response during the session.",
+        "Admit openly and candidly that you possess absolutely no knowledge, expertise, or familiarity with that particular topic and therefore cannot provide any meaningful answer.",
+        "Simply ignore the question entirely without offering any verbal acknowledgment or eye contact and immediately call on the next person who has raised their hand."
+      ], correct:0 }
     ]
   },
   6: {
@@ -524,10 +549,11 @@ const QUIZ_DATA = {
 // ---- LOGIN ----
 function showLogin(error=''){
   const modeTag = firebaseReady
-    ? '<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#4ADE80;margin-top:8px"><span class="live-dot"></span>Live sync enabled</span>'
-    : '<span style="font-size:11px;color:#aaa;margin-top:8px;display:block">⚠️ Offline mode (localStorage only)</span>';
+    ? '<span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:#4ADE80;margin-top:8px"><span class="live-dot"></span>Live sync enabled</span>'
+    : '<span style="font-size:12px;color:#aaa;margin-top:8px;display:block">⚠️ Offline mode (localStorage only)</span>';
+  const opts = ROSTER.map((r,i)=>`<option value="${i}">${r.name}</option>`).join('');
   render(`<div class="page-center fade-in">
-    <div class="card" style="padding:36px 32px;max-width:440px;width:100%"><div class="slide-up">
+    <div class="card" style="padding:36px 32px;max-width:460px;width:100%"><div class="slide-up">
       <div class="text-center mb-6">
         <div style="font-size:42px;margin-bottom:12px">🎓</div>
         <h1 style="font-size:26px;font-weight:700;margin-bottom:4px">LAEN380 Quiz Portal</h1>
@@ -536,45 +562,28 @@ function showLogin(error=''){
       </div>
       ${error?`<div class="alert alert-red mb-4">${error}</div>`:''}
       <div class="space-y-4">
-        <div><label class="label">Full Name (English)</label><input id="login-name" type="text" placeholder="e.g., Somchai Jaidee" class="input"/></div>
-        <div><label class="label">Mahidol Email</label><input id="login-email" type="email" placeholder="yourID@student.mahidol.edu" class="input"/></div>
+        <div><label class="label">Select Your Name</label><select id="login-select" class="input" style="cursor:pointer"><option value="">— Choose your name —</option>${opts}</select></div>
+        <div><label class="label">Password</label><input id="login-pass" type="password" placeholder="Enter your password" class="input"/></div>
         <button onclick="handleLogin()" class="btn btn-dark lg w-full" style="margin-top:8px">Enter Quiz Portal →</button>
-      </div>
-      <div class="text-center mt-6" style="padding-top:16px;border-top:1px solid #EDEDED">
-        <button onclick="showTeacherLogin()" class="btn btn-ghost">🔐 Teacher Dashboard</button>
       </div>
     </div></div>
   </div>`);
 }
 
 async function handleLogin(){
-  const n=document.getElementById('login-name').value.trim(),e=document.getElementById('login-email').value.trim().toLowerCase();
-  if(!n)return showLogin('Please enter your full name.');
-  if(!e.endsWith('@student.mahidol.edu'))return showLogin('Please use your Mahidol email (xxx@student.mahidol.edu).');
+  const sel=document.getElementById('login-select').value;
+  const pass=document.getElementById('login-pass').value;
+  if(sel==='')return showLogin('Please select your name from the list.');
+  if(!pass)return showLogin('Please enter your password.');
+  const person=ROSTER[parseInt(sel)];
+  if(pass!==person.pass)return showLogin('Incorrect password. Please try again.');
   showLoading('Signing in...');
-  const ud=await getUserData(e);ud.name=n;await saveUserData(e,ud);setUser({name:n,email:e});showInstructions();
+  if(person.isTeacher){setUser({name:person.name,email:person.email,isTeacher:true});showTeacherDashboard();return;}
+  const ud=await getUserData(person.email);ud.name=person.name;await saveUserData(person.email,ud);
+  setUser({name:person.name,email:person.email});showInstructions();
 }
 
-// ---- TEACHER LOGIN ----
-function showTeacherLogin(error=''){
-  render(`<div class="page-center fade-in">
-    <div class="card slide-up" style="padding:36px 32px;max-width:400px;width:100%">
-      <div class="text-center mb-6"><div style="font-size:36px;margin-bottom:8px">📊</div><h2 style="font-size:22px;font-weight:700">Teacher Dashboard</h2></div>
-      ${error?`<div class="alert alert-red mb-4">${error}</div>`:''}
-      <div class="space-y-4">
-        <input id="t-user" type="text" placeholder="Username" class="input"/>
-        <input id="t-pass" type="password" placeholder="Password" class="input"/>
-        <button onclick="handleTeacherLogin()" class="btn btn-dark w-full">Access Dashboard</button>
-        <button onclick="showLogin()" class="btn btn-outline w-full">← Back to Dashboard</button>
-      </div>
-    </div>
-  </div>`);
-}
-function handleTeacherLogin(){
-  const u=document.getElementById('t-user').value.trim(),p=document.getElementById('t-pass').value;
-  if(u===TEACHER_USER&&p===TEACHER_PASS){showLoading('Loading dashboard...');showTeacherDashboard();}
-  else showTeacherLogin('Invalid credentials.');
-}
+// Teacher login merged into main login dropdown
 
 // ---- INSTRUCTIONS ----
 function showInstructions(){
@@ -794,7 +803,13 @@ let teacherUnsub = null; // Firestore real-time listener
 
 async function showTeacherDashboard(){
   showLoading('Loading student data...');
-  const studentList = await getAllStudents();
+  // Ensure all roster students exist in database
+  for(const r of ROSTER){
+    if(r.isTeacher) continue;
+    const existing = await getUserData(r.email);
+    if(!existing.name || existing.name==='') {existing.name=r.name; await saveUserData(r.email,existing);}
+  }
+  const studentList = (await getAllStudents()).filter(s=>!s.email?.includes('yungie'));
   renderTeacherTable(studentList);
 
   // Start real-time listener if Firebase is active
@@ -955,7 +970,8 @@ async function exportCSV(){
 window.addEventListener('DOMContentLoaded',()=>{
   if(window.speechSynthesis) window.speechSynthesis.getVoices();
   const u=getUser();
-  if(u) showDashboard();
+  if(u&&u.isTeacher) showTeacherDashboard();
+  else if(u) showDashboard();
   else showLogin();
 });
 </script>
